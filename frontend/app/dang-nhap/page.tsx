@@ -53,7 +53,7 @@ const LoginPage = () => {
         setTimeout(() => {
           switch(result.userType) {
             case "OWNER":
-              window.location.href = "http://localhost:3001";
+              window.location.href = "http://localhost:3003";
               break;
             case "STAFF":
               window.location.href = "http://localhost:3002";
