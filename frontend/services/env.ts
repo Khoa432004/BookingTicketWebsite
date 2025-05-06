@@ -12,8 +12,8 @@ export enum Environment {
 export const API_BASE_URLS = {
   [Environment.LOCAL]: 'http://localhost:8080/api',
   [Environment.PRODUCTION]: 'https://bookingticketwebsite.onrender.com/api',
-  // Use the proxy via Netlify/Vercel for Vercel environment
-  [Environment.VERCEL]: '/proxy/api'
+  // Use the Next.js API route to proxy requests
+  [Environment.VERCEL]: '/api/proxy/api'
 };
 
 // Get current environment

@@ -9,9 +9,35 @@ const getBaseUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/proxy'; // Use the proxy for Vercel environment
+    return '/api/proxy'; // Use the Next.js API proxy route
   } else {
     return 'https://bookingticketwebsite.onrender.com';
+  }
+};
+
+// For login URL based on environment
+const getLoginUrl = (): string => {
+  const currentEnv = getCurrentEnvironment();
+  
+  if (currentEnv === Environment.LOCAL) {
+    return 'http://localhost:8080/dang-nhap';
+  } else if (currentEnv === Environment.VERCEL) {
+    return '/api/auth/login'; // Use the dedicated login API route
+  } else {
+    return 'https://bookingticketwebsite.onrender.com/dang-nhap';
+  }
+};
+
+// For logout URL based on environment
+const getLogoutUrl = (): string => {
+  const currentEnv = getCurrentEnvironment();
+  
+  if (currentEnv === Environment.LOCAL) {
+    return 'http://localhost:8080/dang-xuat';
+  } else if (currentEnv === Environment.VERCEL) {
+    return '/api/auth/logout'; // Use the dedicated logout API route
+  } else {
+    return 'https://bookingticketwebsite.onrender.com/dang-xuat';
   }
 };
 
@@ -126,7 +152,7 @@ export const login = async (
   try {
     console.log("Đang đăng nhập với:", userName);
     
-    const response = await fetch(`${getBaseUrl()}/dang-nhap`, {
+    const response = await fetch(getLoginUrl(), {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -170,7 +196,7 @@ export const login = async (
  */
 export const logout = async (): Promise<{success: boolean, message: string}> => {
   try {
-    const response = await fetch(`${getBaseUrl()}/dang-xuat`, {
+    const response = await fetch(getLogoutUrl(), {
       method: "POST",
       credentials: "include",
     });
