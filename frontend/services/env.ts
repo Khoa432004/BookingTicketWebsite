@@ -15,9 +15,18 @@ export const API_BASE_URLS = {
 
 // Get current environment
 export const getCurrentEnvironment = (): Environment => {
-  // Set this to Environment.PRODUCTION to use production API
-  // Set this to Environment.LOCAL to use localhost API
-  return Environment.LOCAL; // Default to local for development
+  // Auto-detect environment based on hostname
+  if (typeof window !== 'undefined') {
+    // Check if we're running on localhost
+    if (window.location.hostname === 'localhost') {
+      return Environment.LOCAL;
+    }
+    // Any other hostname is considered production
+    return Environment.PRODUCTION;
+  }
+  
+  // Default to production for SSR
+  return Environment.PRODUCTION;
 };
 
 // Get the current API base URL based on environment

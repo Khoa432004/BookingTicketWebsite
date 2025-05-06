@@ -1,4 +1,14 @@
 // Hàm utility cho việc quản lý authentication
+import getApiBaseUrl from "@/services/env";
+import { Environment, getCurrentEnvironment } from "@/services/env";
+
+// For getting base URL without /api path
+const getBaseUrl = (): string => {
+  const currentEnv = getCurrentEnvironment();
+  return currentEnv === Environment.LOCAL 
+    ? 'http://localhost:8080' 
+    : 'https://bookingticketwebsite.onrender.com';
+};
 
 /**
  * Kiểm tra xem người dùng đã đăng nhập hay chưa
@@ -111,7 +121,7 @@ export const login = async (
   try {
     console.log("Đang đăng nhập với:", userName);
     
-    const response = await fetch("http://localhost:8080/dang-nhap", {
+    const response = await fetch(`${getBaseUrl()}/dang-nhap`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -155,7 +165,7 @@ export const login = async (
  */
 export const logout = async (): Promise<{success: boolean, message: string}> => {
   try {
-    const response = await fetch("http://localhost:8080/dang-xuat", {
+    const response = await fetch(`${getBaseUrl()}/dang-xuat`, {
       method: "POST",
       credentials: "include",
     });

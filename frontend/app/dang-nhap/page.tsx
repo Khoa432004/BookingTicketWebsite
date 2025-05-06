@@ -15,6 +15,7 @@ import Image from "next/image"
 import { Eye, EyeOff } from "lucide-react"
 import dynamic from "next/dynamic"
 import { login } from "@/lib/auth"
+import { Environment, getCurrentEnvironment } from "@/services/env"
 
 const LoginPage = () => {
   const router = useRouter()
@@ -30,6 +31,17 @@ const LoginPage = () => {
   })
   const [errorMessage, setErrorMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  // Function to get base URL based on environment
+  const getRedirectUrl = (port: string): string => {
+    const currentEnv = getCurrentEnvironment();
+    if (currentEnv === Environment.LOCAL) {
+      return `http://localhost:${port}`;
+    } else {
+      // Update these with your actual production URLs for owner and staff
+      return `https://bookingticketwebsite-${port}.onrender.com`;
+    }
+  };
 
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -53,10 +65,10 @@ const LoginPage = () => {
         setTimeout(() => {
           switch(result.userType) {
             case "OWNER":
-              window.location.href = "http://localhost:3001";
+              window.location.href = getRedirectUrl("3001");
               break;
             case "STAFF":
-              window.location.href = "http://localhost:3002";
+              window.location.href = getRedirectUrl("3002");
               break;
             default:
               router.push("/");
