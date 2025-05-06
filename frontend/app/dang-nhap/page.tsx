@@ -37,8 +37,16 @@ const LoginPage = () => {
     const currentEnv = getCurrentEnvironment();
     if (currentEnv === Environment.LOCAL) {
       return `http://localhost:${port}`;
+    } else if (currentEnv === Environment.VERCEL) {
+      // For Vercel environment, you need to specify the correct URLs for owner and staff
+      // Replace these with your actual URLs
+      if (port === "3001") {
+        return `https://booking-owner-dashboard.vercel.app`; // Replace with actual owner URL
+      } else {
+        return `https://booking-staff-dashboard.vercel.app`; // Replace with actual staff URL
+      }
     } else {
-      // Update these with your actual production URLs for owner and staff
+      // Production URLs
       return `https://bookingticketwebsite-${port}.onrender.com`;
     }
   };

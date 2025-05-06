@@ -5,9 +5,15 @@ import { Environment, getCurrentEnvironment } from "@/services/env";
 // For getting base URL without /api path
 const getBaseUrl = (): string => {
   const currentEnv = getCurrentEnvironment();
-  return currentEnv === Environment.LOCAL 
-    ? 'http://localhost:8080' 
-    : 'https://bookingticketwebsite.onrender.com';
+  
+  if (currentEnv === Environment.LOCAL) {
+    return 'http://localhost:8080';
+  } else if (currentEnv === Environment.VERCEL) {
+    // Use CORS proxy for Vercel environment until backend CORS is fixed
+    return 'https://cors-anywhere.herokuapp.com/https://bookingticketwebsite.onrender.com';
+  } else {
+    return 'https://bookingticketwebsite.onrender.com';
+  }
 };
 
 /**

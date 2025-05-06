@@ -4,13 +4,16 @@
 // Define available environments
 export enum Environment {
   LOCAL = 'local',
-  PRODUCTION = 'production'
+  PRODUCTION = 'production',
+  VERCEL = 'vercel'
 }
 
 // Define API base URLs for each environment
 export const API_BASE_URLS = {
   [Environment.LOCAL]: 'http://localhost:8080/api',
-  [Environment.PRODUCTION]: 'https://bookingticketwebsite.onrender.com/api'
+  [Environment.PRODUCTION]: 'https://bookingticketwebsite.onrender.com/api',
+  // Using a CORS proxy for Vercel deployment until backend CORS is configured
+  [Environment.VERCEL]: 'https://cors-anywhere.herokuapp.com/https://bookingticketwebsite.onrender.com/api'
 };
 
 // Get current environment
@@ -20,6 +23,10 @@ export const getCurrentEnvironment = (): Environment => {
     // Check if we're running on localhost
     if (window.location.hostname === 'localhost') {
       return Environment.LOCAL;
+    }
+    // Check if we're running on Vercel
+    if (window.location.hostname.includes('vercel.app')) {
+      return Environment.VERCEL;
     }
     // Any other hostname is considered production
     return Environment.PRODUCTION;
