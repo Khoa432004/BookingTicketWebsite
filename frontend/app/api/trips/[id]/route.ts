@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080';
+
 type Props = {
   params: {
     id: string;
@@ -9,10 +11,8 @@ type Props = {
 export async function GET(request: NextRequest, { params }: Props) {
   try {
     console.log('Fetching trip details for ID:', params.id);
-    
-    const apiUrl = new URL(`/api/trips/${params.id}`, 'http://localhost:8080');
-    console.log('Calling backend API:', apiUrl.toString());
-    
+    const apiUrl = `${backendUrl}/api/trips/${params.id}`;
+    console.log('Calling backend API:', apiUrl);
     const response = await fetch(apiUrl, {
       method: 'GET',
       headers: {
