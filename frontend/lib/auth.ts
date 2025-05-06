@@ -9,8 +9,7 @@ const getBaseUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080';
   } else if (currentEnv === Environment.VERCEL) {
-    // Use CORS proxy for Vercel environment until backend CORS is fixed
-    return 'https://cors-anywhere.herokuapp.com/https://bookingticketwebsite.onrender.com';
+    return '/proxy'; // Use the proxy for Vercel environment
   } else {
     return 'https://bookingticketwebsite.onrender.com';
   }

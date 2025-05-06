@@ -12,8 +12,8 @@ export enum Environment {
 export const API_BASE_URLS = {
   [Environment.LOCAL]: 'http://localhost:8080/api',
   [Environment.PRODUCTION]: 'https://bookingticketwebsite.onrender.com/api',
-  // Using a CORS proxy for Vercel deployment until backend CORS is configured
-  [Environment.VERCEL]: 'https://cors-anywhere.herokuapp.com/https://bookingticketwebsite.onrender.com/api'
+  // Use the proxy via Netlify/Vercel for Vercel environment
+  [Environment.VERCEL]: '/proxy/api'
 };
 
 // Get current environment
