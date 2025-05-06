@@ -14,6 +14,7 @@ export interface Trip {
   bus_id: number
 }
 
+// Lấy URL backend từ biến môi trường, ưu tiên dùng khi deploy
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'
 
 export async function GET() {
@@ -26,6 +27,12 @@ export async function GET() {
     })
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Backend error response:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
       throw new Error('Failed to fetch trips')
     }
 
@@ -34,7 +41,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching trips:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch trips' },
+      { error: error instanceof Error ? error.message : 'Failed to fetch trips' },
       { status: 500 }
     )
   }
