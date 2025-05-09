@@ -20,6 +20,7 @@ import { format } from "date-fns"
 import { vi } from "date-fns/locale"
 import { tripApi } from "@/services/api"
 import { use } from "react"
+import getApiBaseUrl from "@/services/env"
 
 interface PageProps {
   params: Promise<{
@@ -89,11 +90,11 @@ export default function BookingPage({ params }: PageProps) {
       
       try {
         setLoading(true);
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+        const backendUrl = getApiBaseUrl();
         console.log('Loading trip details from:', backendUrl);
 
         // Fetch trip details directly from backend
-        const tripResponse = await fetch(`${backendUrl}/api/trips/${resolvedParams.id}`);
+        const tripResponse = await fetch(`${backendUrl}/trips/${resolvedParams.id}`);
         if (!tripResponse.ok) {
           throw new Error('Không thể tải thông tin chuyến xe');
         }
@@ -107,7 +108,7 @@ export default function BookingPage({ params }: PageProps) {
         }
 
         // Fetch seats for this specific trip/bus
-        const seatsResponse = await fetch(`${backendUrl}/api/seats/trip/${busId}`);
+        const seatsResponse = await fetch(`${backendUrl}/seats/trip/${busId}`);
         if (!seatsResponse.ok) {
           throw new Error('Không thể tải thông tin ghế');
         }
@@ -184,7 +185,8 @@ export default function BookingPage({ params }: PageProps) {
       setError(null);
 
       // Check seat availability in real-time
-      const response = await fetch(`/api/seats/check/${seat.id}`);
+      const backendUrl = getApiBaseUrl();
+      const response = await fetch(`${backendUrl}/seats/check/${seat.id}`);
       const data = await response.json();
       
       if (!response.ok) {
@@ -311,13 +313,13 @@ export default function BookingPage({ params }: PageProps) {
       console.log('=== Validating booking info ===');
       
       // Validate required fields
-    if (!selectedSeat) {
+      if (!selectedSeat) {
         throw new Error('Vui lòng chọn ghế');
-    }
-    if (!passengerInfo.name || !passengerInfo.phone || !passengerInfo.email) {
+      }
+      if (!passengerInfo.name || !passengerInfo.phone || !passengerInfo.email) {
         throw new Error('Vui lòng điền đầy đủ thông tin hành khách');
-    }
-    if (!agreeToTerms) {
+      }
+      if (!agreeToTerms) {
         throw new Error('Vui lòng đồng ý với điều khoản và điều kiện');
       }
 

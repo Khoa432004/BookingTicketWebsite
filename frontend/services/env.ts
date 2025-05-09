@@ -39,7 +39,10 @@ export const getCurrentEnvironment = (): Environment => {
 // Get the current API base URL based on environment
 export const getApiBaseUrl = (): string => {
   const currentEnv = getCurrentEnvironment();
-  return API_BASE_URLS[currentEnv];
+  console.log('Current environment:', currentEnv);
+  const baseUrl = API_BASE_URLS[currentEnv];
+  console.log('Using API base URL:', baseUrl);
+  return baseUrl;
 };
 
 export default getApiBaseUrl; 

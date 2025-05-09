@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server"
 import type { Payment } from "../../payments/prepare/route"
 
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'
+
 export async function POST(request: Request, { params }: { params: { paymentId: string } }) {
   try {
     const paymentId = params.paymentId
 
     // Call the Spring Boot API to process payment
-    const response = await fetch(`http://localhost:8080/api/payments/process/${paymentId}`, {
+    const response = await fetch(`${backendUrl}/api/payments/process/${paymentId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

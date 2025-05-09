@@ -1,6 +1,7 @@
 import axios from 'axios';
+import getApiBaseUrl from '@/services/env';
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = getApiBaseUrl();
 
 export interface Trip {
   id: number;

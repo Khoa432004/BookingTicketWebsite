@@ -23,6 +23,9 @@ public class CorsConfig {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:3001");
         config.addAllowedOrigin("http://localhost:3002");
+        // Add production URLs
+        config.addAllowedOrigin("https://booking-ticket-website-8ybe.vercel.app");
+        config.addAllowedOrigin("https://booking-ticket-website-tyxb.vercel.app");
         
         config.addAllowedHeader("Origin");
         config.addAllowedHeader("Content-Type");
