@@ -5,7 +5,8 @@
 export enum Environment {
   LOCAL = 'local',
   PRODUCTION = 'production',
-  VERCEL = 'vercel'
+  VERCEL = 'vercel',
+  STAFF_DASHBOARD = 'staff_dashboard'
 }
 
 // Define API base URLs for each environment
@@ -13,7 +14,9 @@ export const API_BASE_URLS = {
   [Environment.LOCAL]: 'http://localhost:8080/api',
   [Environment.PRODUCTION]: 'https://bookingticketwebsite.onrender.com/api',
   // Use the Next.js API route to proxy requests
-  [Environment.VERCEL]: '/api/proxy/api'
+  [Environment.VERCEL]: '/api/proxy/api',
+  // Staff dashboard environment
+  [Environment.STAFF_DASHBOARD]: 'https://bookingticketwebsite.onrender.com/api'
 };
 
 // Get current environment
@@ -23,6 +26,10 @@ export const getCurrentEnvironment = (): Environment => {
     // Check if we're running on localhost
     if (window.location.hostname === 'localhost') {
       return Environment.LOCAL;
+    }
+    // Check if we're running on staff dashboard
+    if (window.location.hostname === 'booking-ticket-website-tyxb.vercel.app') {
+      return Environment.STAFF_DASHBOARD;
     }
     // Check if we're running on Vercel
     if (window.location.hostname.includes('vercel.app')) {

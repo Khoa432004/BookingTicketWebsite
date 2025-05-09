@@ -41,9 +41,9 @@ const LoginPage = () => {
       // For Vercel environment, you need to specify the correct URLs for owner and staff
       // Replace these with your actual URLs
       if (port === "3001") {
-        return `https://booking-owner-dashboard.vercel.app`; // Replace with actual owner URL
+        return `https://booking-ticket-website-8ybe.vercel.app/`; // Replace with actual owner URL
       } else {
-        return `https://booking-staff-dashboard.vercel.app`; // Replace with actual staff URL
+        return `https://booking-ticket-website-tyxb.vercel.app/dashboard`; // Replace with actual staff URL
       }
     } else {
       // Production URLs

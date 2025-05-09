@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/staff")
-@CrossOrigin(origins = {"http://localhost:3000", "https://booking-ticket-website-8ybe.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://booking-ticket-website-8ybe.vercel.app", "https://booking-ticket-website-tyxb.vercel.app"})
 public class CustomerController {
 
     private final CustomerService customerService;

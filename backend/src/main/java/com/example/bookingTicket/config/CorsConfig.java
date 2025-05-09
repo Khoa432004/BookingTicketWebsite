@@ -26,6 +26,7 @@ public class CorsConfig {
         // Add production URLs
         config.addAllowedOrigin("https://booking-ticket-website-8ybe.vercel.app");
         config.addAllowedOrigin("https://booking-ticket-website-tyxb.vercel.app");
+        config.addAllowedOrigin("https://booking-ticket-website-silk.vercel.app");
         
         config.addAllowedHeader("Origin");
         config.addAllowedHeader("Content-Type");
