@@ -47,8 +47,8 @@ export default function TicketsPage() {
 
   useEffect(() => {
     const url = searchQuery.trim()
-      ? `http://localhost:8080/api/staff/tickets/search?q=${encodeURIComponent(searchQuery)}`
-      : `http://localhost:8080/api/staff/tickets`
+      ? `https://bookingticketwebsite.onrender.com/api/staff/tickets/search?q=${encodeURIComponent(searchQuery)}`
+      : `https://bookingticketwebsite.onrender.com/api/staff/tickets`
 
     setTickets([])
 
@@ -82,7 +82,7 @@ export default function TicketsPage() {
   })
 
   const handleViewDetail = (ticketId: string) => {
-    fetch(`http://localhost:8080/api/staff/tickets/${ticketId}`)
+    fetch(`https://bookingticketwebsite.onrender.com/api/staff/tickets/${ticketId}`)
       .then(res => res.json())
       .then(data => {
         setSelectedTicket({
