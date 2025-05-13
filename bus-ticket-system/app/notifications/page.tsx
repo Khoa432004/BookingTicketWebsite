@@ -49,7 +49,7 @@ export default function NotificationsPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${getBaseUrl()}/notifications`, {
+        const response = await fetch(`api/notifications`, {
           method: 'GET',
           credentials: 'include', // Gửi cookie để backend nhận session
         });
