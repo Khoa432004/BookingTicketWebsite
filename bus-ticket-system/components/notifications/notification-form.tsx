@@ -6,6 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Định nghĩa hằng số API_BASE_URL
+const API_BASE_URL = "https://booking-ticket-website-silk.vercel.app";
+
 // Định nghĩa interface cho Notification
 interface Notification {
   id: string;
@@ -39,8 +42,8 @@ export function NotificationForm({ onSubmit, notification = null }: Notification
     try {
       const isEditMode = notification !== null;
       const url = isEditMode
-        ? `http://localhost:8080/notifications/${notification.id}`
-        : 'http://localhost:8080/notifications';
+        ? `${API_BASE_URL}/notifications/${notification.id}`
+        : `${API_BASE_URL}/notifications`;
       const method = isEditMode ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
