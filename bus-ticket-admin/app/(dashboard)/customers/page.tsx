@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getBaseUrl } from "@/lib/auth"
 
 type Customer = {
   id: string
@@ -38,12 +39,12 @@ export default function CustomersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
 
   const fetchCustomers = () => {
-    let url = "http://localhost:8080/api/staff/customers"
+    let url = `${getBaseUrl()}/api/staff/customers`
 
     if (searchQuery.trim()) {
-      url = `http://localhost:8080/api/staff/customers/search?keyword=${encodeURIComponent(searchQuery)}`
+      url = `${getBaseUrl()}/api/staff/customers/search?keyword=${encodeURIComponent(searchQuery)}`
     } else if (statusFilter !== "all") {
-      url = `http://localhost:8080/api/staff/customers/search?keyword=${encodeURIComponent(statusFilter)}`
+      url = `${getBaseUrl()}/api/staff/customers/search?keyword=${encodeURIComponent(statusFilter)}`
     }
 
     fetch(url)
@@ -70,7 +71,7 @@ export default function CustomersPage() {
   }, [searchQuery, statusFilter])
 
   const handleToggleStatus = (customer: Customer) => {
-    fetch(`http://localhost:8080/api/staff/customers/${customer.id}/toggle-status`, {
+    fetch(`${getBaseUrl()}/api/staff/customers/${customer.id}/toggle-status`, {
       method: "PUT",
     })
       .then((res) => {

@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { NotificationForm } from "@/components/notifications/notification-form";
 import { NotificationDetails } from "@/components/notifications/notification-details";
+import { getBaseUrl } from "@/lib/auth"
 
 // Định nghĩa interface cho Notification
 interface Notification {
@@ -48,7 +49,7 @@ export default function NotificationsPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:8080/notifications', {
+        const response = await fetch(`${getBaseUrl()}/notifications`, {
           method: 'GET',
           credentials: 'include', // Gửi cookie để backend nhận session
         });
@@ -86,7 +87,7 @@ export default function NotificationsPage() {
 
   const handleDelete = async (notificationId: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/notifications/${notificationId}`, {
+      const response = await fetch(`${getBaseUrl()}/notifications/${notificationId}`, {
         method: 'DELETE',
         credentials: 'include', // Gửi cookie để backend nhận session
       });

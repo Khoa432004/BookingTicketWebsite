@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
 import axios from "axios"
+import { getBaseUrl } from "@/lib/auth"
 
 type Notification = {
   id: string
@@ -50,7 +51,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
     const fetchNotifications = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ApiNotification[]>("http://localhost:8080/notifications", {
+        const response = await axios.get<ApiNotification[]>(`${getBaseUrl()}/notifications`, {
           withCredentials: true,
         });
 
@@ -137,7 +138,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
     // Gọi API để đánh dấu thông báo là đã đọc
     try {
       await axios.put(
-        `http://localhost:8080/notifications/${notification.id}/read`,
+        `${getBaseUrl()}/notifications/${notification.id}/read`,
         {},
         { withCredentials: true }
       );
