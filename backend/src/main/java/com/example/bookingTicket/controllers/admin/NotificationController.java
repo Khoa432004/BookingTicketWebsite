@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/notifications") // Changed from "/notifications" to "/api/notifications"
 public class NotificationController {
 
     @Autowired

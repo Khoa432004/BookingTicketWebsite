@@ -40,8 +40,8 @@ export function NotificationForm({ onSubmit, notification = null }: Notification
     try {
       const isEditMode = notification !== null;
       const url = isEditMode
-        ? `${getBaseUrl()}/notifications/${notification.id}`
-        : `${getBaseUrl()}/notifications`;
+        ? `${getBaseUrl()}/api/notifications/${notification.id}` // Sử dụng proxy
+        : `${getBaseUrl()}/api/notifications`; // Sử dụng proxy
       const method = isEditMode ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -88,7 +88,7 @@ export function NotificationForm({ onSubmit, notification = null }: Notification
         <Input
           id="content"
           value={content}
-          onChange={(e) => setContent(e.target.value)} // Sửa lỗi từ setTitle thành setContent
+          onChange={(e) => setContent(e.target.value)}
           placeholder="Nhập nội dung..."
           required
         />
