@@ -49,7 +49,7 @@ export default function NotificationsPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${getBaseUrl()}/api/notifications`, {
+        const response = await fetch(`/api/notifications`, {
           method: 'GET',
           credentials: 'include', // Gửi cookie để backend nhận session
         });
@@ -87,7 +87,7 @@ export default function NotificationsPage() {
 
   const handleDelete = async (notificationId: string) => {
     try {
-      const response = await fetch(`${getBaseUrl()}/api/notifications/${notificationId}`, {
+      const response = await fetch(`/api/notifications/${notificationId}`, {
         method: 'DELETE',
         credentials: 'include', // Gửi cookie để backend nhận session
       });
