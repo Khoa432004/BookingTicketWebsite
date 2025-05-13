@@ -88,7 +88,7 @@ export function NotificationForm({ onSubmit, notification = null }: Notification
         <Input
           id="content"
           value={content}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => setContent(e.target.value)} // Sửa lỗi từ setTitle thành setContent
           placeholder="Nhập nội dung..."
           required
         />
