@@ -11,12 +11,12 @@
 
   // Define API base URLs for each environment
   export const API_BASE_URLS = {
-    [Environment.LOCAL]: 'http://localhost:8080/api',
-    [Environment.PRODUCTION]: 'https://bookingticketwebsite.onrender.com/api',
-    // Trỏ thẳng đến backend trên Render thay vì proxy
-    [Environment.VERCEL]: 'https://bookingticketwebsite.onrender.com/api',
+    [Environment.LOCAL]: 'http://localhost:8080',
+    [Environment.PRODUCTION]: 'https://bookingticketwebsite.onrender.com',
+    // Trỏ thẳng đến backend trên Render
+    [Environment.VERCEL]: 'https://bookingticketwebsite.onrender.com',
     // Render environment
-    [Environment.RENDER]: 'https://bookingticketwebsite.onrender.com/api'
+    [Environment.RENDER]: 'https://bookingticketwebsite.onrender.com'
   };
 
   // Get current environment
