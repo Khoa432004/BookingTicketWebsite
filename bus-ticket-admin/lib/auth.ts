@@ -19,11 +19,11 @@ const getLoginUrl = (): string => {
   const currentEnv = getCurrentEnvironment();
   
   if (currentEnv === Environment.LOCAL) {
-    return 'http://localhost:8080/dang-nhap';
+    return 'http://localhost:8080/admin/dang-nhap';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/api/auth/login'; // Use the dedicated login API route
+    return '/api/auth/admin/login'; // Use the dedicated login API route
   } else {
-    return 'https://bookingticketwebsite.onrender.com/dang-nhap';
+    return 'https://bookingticketwebsite.onrender.com/admin/dang-nhap';
   }
 };
 
@@ -32,11 +32,11 @@ const getLogoutUrl = (): string => {
   const currentEnv = getCurrentEnvironment();
   
   if (currentEnv === Environment.LOCAL) {
-    return 'http://localhost:8080/dang-xuat';
+    return 'http://localhost:8080/admin/dang-xuat';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/api/auth/logout'; // Use the dedicated logout API route
+    return '/api/auth/admin/logout'; // Use the dedicated logout API route
   } else {
-    return 'https://bookingticketwebsite.onrender.com/dang-xuat';
+    return 'https://bookingticketwebsite.onrender.com/admin/dang-xuat';
   }
 };
 
@@ -45,7 +45,7 @@ const getLogoutUrl = (): string => {
  */
 export const isLoggedIn = (): boolean => {
   if (typeof window === 'undefined') return false;
-  return sessionStorage.getItem("isLoggedIn") === "true";
+  return sessionStorage.getItem("isAdminLoggedIn") === "true";
 };
 
 /**
@@ -53,7 +53,7 @@ export const isLoggedIn = (): boolean => {
  */
 export const getUserName = (): string | null => {
   if (typeof window === 'undefined') return null;
-  return sessionStorage.getItem("userName");
+  return sessionStorage.getItem("adminUserName");
 };
 
 /**
@@ -61,7 +61,7 @@ export const getUserName = (): string | null => {
  */
 export const getUserType = (): string | null => {
   if (typeof window === 'undefined') return null;
-  return sessionStorage.getItem("userType");
+  return sessionStorage.getItem("adminUserType");
 };
 
 /**
@@ -70,11 +70,11 @@ export const getUserType = (): string | null => {
 export const getUserId = (): string | null => {
   if (typeof window === 'undefined') return null;
   // Kiểm tra từ cả sessionStorage và cookie
-  const fromSession = sessionStorage.getItem("userId");
+  const fromSession = sessionStorage.getItem("adminUserId");
   
   // Nếu không có trong session, thử lấy từ cookie
   if (!fromSession) {
-    return getCookie("userId");
+    return getCookie("adminUserId");
   }
   
   return fromSession;
@@ -109,16 +109,16 @@ export const saveLoginInfo = (userName: string, userType: string, userId: string
   if (typeof window === 'undefined') return;
 
   // Lưu vào sessionStorage
-  sessionStorage.setItem("userName", userName);
-  sessionStorage.setItem("userType", userType);
-  sessionStorage.setItem("userId", userId);
-  sessionStorage.setItem("isLoggedIn", "true");
+  sessionStorage.setItem("adminUserName", userName);
+  sessionStorage.setItem("adminUserType", userType);
+  sessionStorage.setItem("adminUserId", userId);
+  sessionStorage.setItem("isAdminLoggedIn", "true");
   
   // Lưu thêm vào cookie (phòng trường hợp backend chưa lưu được cookie)
-  setCookie("userId", userId);
-  setCookie("userName", userName);
+  setCookie("adminUserId", userId);
+  setCookie("adminUserName", userName);
   
-  console.log("Đã lưu userId vào cookie và session:", userId);
+  console.log("Đã lưu adminUserId vào cookie và session:", userId);
   
   // Kích hoạt event để thông báo cho các component khác
   window.dispatchEvent(new Event('storage'));
@@ -128,14 +128,14 @@ export const saveLoginInfo = (userName: string, userType: string, userId: string
  * Xóa thông tin đăng nhập khỏi session
  */
 export const clearLoginInfo = (): void => {
-  sessionStorage.removeItem("userName");
-  sessionStorage.removeItem("userType");
-  sessionStorage.removeItem("userId");
-  sessionStorage.removeItem("isLoggedIn");
+  sessionStorage.removeItem("adminUserName");
+  sessionStorage.removeItem("adminUserType");
+  sessionStorage.removeItem("adminUserId");
+  sessionStorage.removeItem("isAdminLoggedIn");
   
   // Xóa cookies
-  setCookie("userId", "", -1);
-  setCookie("userName", "", -1);
+  setCookie("adminUserId", "", -1);
+  setCookie("adminUserName", "", -1);
   
   // Kích hoạt event để thông báo cho các component khác
   window.dispatchEvent(new Event('storage'));
@@ -149,7 +149,7 @@ export const login = async (
   password: string
 ): Promise<{success: boolean, message: string, userType?: string, userId?: string}> => {
   try {
-    console.log("Đang đăng nhập với:", userName);
+    console.log("Đang đăng nhập admin với:", userName);
     
     const response = await fetch(getLoginUrl(), {
       method: "POST",
@@ -167,8 +167,8 @@ export const login = async (
     const data = await response.json();
     
     if (response.ok) {
-      console.log("Đăng nhập thành công, userId:", data.userId);
-      saveLoginInfo(data.userName, data.userType, data.userId || "3"); // Mặc định là 3 nếu không có userId
+      console.log("Đăng nhập admin thành công, userId:", data.userId);
+      saveLoginInfo(data.userName, data.userType, data.userId || "1"); // Mặc định là 1 nếu không có userId
       return {
         success: true,
         message: "Đăng nhập thành công",
@@ -182,7 +182,7 @@ export const login = async (
       };
     }
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("Admin login error:", error);
     return {
       success: false,
       message: "Không thể kết nối đến server"
@@ -214,7 +214,7 @@ export const logout = async (): Promise<{success: boolean, message: string}> => 
       };
     }
   } catch (error) {
-    console.error("Logout error:", error);
+    console.error("Admin logout error:", error);
     
     // Vẫn xóa dữ liệu ngay cả khi gọi API thất bại
     clearLoginInfo();

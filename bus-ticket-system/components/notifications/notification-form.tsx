@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getBaseUrl } from "@/lib/auth";
 
 // Định nghĩa interface cho Notification
 interface Notification {
@@ -39,8 +40,8 @@ export function NotificationForm({ onSubmit, notification = null }: Notification
     try {
       const isEditMode = notification !== null;
       const url = isEditMode
-        ? `http://localhost:8080/notifications/${notification.id}`
-        : 'http://localhost:8080/notifications';
+        ? `${getBaseUrl()}/notifications/${notification.id}`
+        : `${getBaseUrl()}/notifications`;
       const method = isEditMode ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

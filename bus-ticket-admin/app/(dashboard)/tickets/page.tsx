@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import { getBaseUrl } from "@/lib/auth"
 
 type Ticket = {
   id: string
@@ -47,8 +48,8 @@ export default function TicketsPage() {
 
   useEffect(() => {
     const url = searchQuery.trim()
-      ? `http://localhost:8080/api/staff/tickets/search?q=${encodeURIComponent(searchQuery)}`
-      : `http://localhost:8080/api/staff/tickets`
+      ? `${getBaseUrl()}/api/staff/tickets/search?q=${encodeURIComponent(searchQuery)}`
+      : `${getBaseUrl()}/api/staff/tickets`
 
     setTickets([])
 
@@ -82,7 +83,7 @@ export default function TicketsPage() {
   })
 
   const handleViewDetail = (ticketId: string) => {
-    fetch(`http://localhost:8080/api/staff/tickets/${ticketId}`)
+    fetch(`${getBaseUrl()}/api/staff/tickets/${ticketId}`)
       .then(res => res.json())
       .then(data => {
         setSelectedTicket({
