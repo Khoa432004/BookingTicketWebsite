@@ -1,0 +1,11 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/page": "/",
+  "/(dashboard)/canceled-tickets/page": "/canceled-tickets",
+  "/(dashboard)/customers/page": "/customers",
+  "/(dashboard)/dashboard/page": "/dashboard",
+  "/(dashboard)/notifications/page": "/notifications",
+  "/(dashboard)/support/page": "/support",
+  "/(dashboard)/tickets/page": "/tickets",
+  "/(dashboard)/promotions/page": "/promotions"
+}
