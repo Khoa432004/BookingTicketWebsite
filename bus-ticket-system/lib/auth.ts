@@ -8,9 +8,9 @@ export const getBaseUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/api/proxy'; // Use the Next.js API proxy route
+    return '/api/proxy/api'; // Use the Next.js API proxy route
   } else {
-    return 'https://bookingticketwebsite.onrender.com';
+    return 'https://bookingticketwebsite.onrender.com/api';
   }
 };
 

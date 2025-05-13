@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { NotificationForm } from "@/components/notifications/notification-form";
 import { NotificationDetails } from "@/components/notifications/notification-details";
-import { getBaseUrl } from "@/lib/auth";
+import { getBaseUrl } from "@/lib/auth"
 
 // Định nghĩa interface cho Notification
 interface Notification {
@@ -49,7 +49,7 @@ export default function NotificationsPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/notifications`, {
+        const response = await fetch(`${getBaseUrl()}/notifications`, {
           method: 'GET',
           credentials: 'include', // Gửi cookie để backend nhận session
         });
@@ -87,7 +87,7 @@ export default function NotificationsPage() {
 
   const handleDelete = async (notificationId: string) => {
     try {
-      const response = await fetch(`/api/notifications/${notificationId}`, {
+      const response = await fetch(`${getBaseUrl()}/notifications/${notificationId}`, {
         method: 'DELETE',
         credentials: 'include', // Gửi cookie để backend nhận session
       });
@@ -128,7 +128,7 @@ export default function NotificationsPage() {
       notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       notification.content.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesTarget = targetFilter === "all_targets" || !targetFilter || notification.target === targetFilter;
+    const matchesTarget = !targetFilter || notification.target === targetFilter;
 
     return matchesSearch && matchesTarget;
   });
@@ -284,4 +284,4 @@ export default function NotificationsPage() {
       </Dialog>
     </div>
   );
-}
+} 
