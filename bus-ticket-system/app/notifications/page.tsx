@@ -128,7 +128,7 @@ export default function NotificationsPage() {
       notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       notification.content.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesTarget = !targetFilter || notification.target === targetFilter;
+    const matchesTarget = targetFilter === "all_targets" || !targetFilter || notification.target === targetFilter;
 
     return matchesSearch && matchesTarget;
   });
@@ -199,7 +199,7 @@ export default function NotificationsPage() {
                   <SelectValue placeholder="Tất cả" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tất cả</SelectItem>
+                  <SelectItem value="all_targets">Tất cả</SelectItem>
                   <SelectItem value="staff">Nhân viên</SelectItem>
                   <SelectItem value="customer">Khách hàng</SelectItem>
                   <SelectItem value="all">Tất cả đối tượng</SelectItem>
