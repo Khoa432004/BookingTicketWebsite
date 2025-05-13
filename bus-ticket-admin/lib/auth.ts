@@ -8,7 +8,7 @@ export const getBaseUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/api/proxy'; // Use the Next.js API proxy route
+    return 'https://booking-ticket-website-8ybe.vercel.app'; // Trả về URL gốc của backend
   } else {
     return 'https://bookingticketwebsite.onrender.com';
   }
@@ -21,7 +21,7 @@ const getLoginUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080/admin/dang-nhap';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/api/auth/admin/login'; // Use the dedicated login API route
+    return 'https://booking-ticket-website-8ybe.vercel.app/admin/dang-nhap'; // Sửa để trỏ thẳng đến backend
   } else {
     return 'https://bookingticketwebsite.onrender.com/admin/dang-nhap';
   }
@@ -34,7 +34,7 @@ const getLogoutUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080/admin/dang-xuat';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/api/auth/admin/logout'; // Use the dedicated logout API route
+    return 'https://booking-ticket-website-8ybe.vercel.app/admin/dang-xuat'; // Sửa để trỏ thẳng đến backend
   } else {
     return 'https://bookingticketwebsite.onrender.com/admin/dang-xuat';
   }
@@ -224,4 +224,4 @@ export const logout = async (): Promise<{success: boolean, message: string}> => 
       message: "Không thể kết nối đến server"
     };
   }
-}; 
+};
