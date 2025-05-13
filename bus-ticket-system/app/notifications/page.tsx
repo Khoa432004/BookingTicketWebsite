@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { NotificationForm } from "@/components/notifications/notification-form";
 import { NotificationDetails } from "@/components/notifications/notification-details";
-import { getBaseUrl } from "@/lib/auth"
+import { getBaseUrl } from "@/lib/auth";
 
 // Định nghĩa interface cho Notification
 interface Notification {
@@ -49,7 +49,7 @@ export default function NotificationsPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${getBaseUrl()}/notifications`, {
+        const response = await fetch(`${getBaseUrl()}/api/notifications`, {
           method: 'GET',
           credentials: 'include', // Gửi cookie để backend nhận session
         });
@@ -87,7 +87,7 @@ export default function NotificationsPage() {
 
   const handleDelete = async (notificationId: string) => {
     try {
-      const response = await fetch(`${getBaseUrl()}/notifications/${notificationId}`, {
+      const response = await fetch(`${getBaseUrl()}/api/notifications/${notificationId}`, {
         method: 'DELETE',
         credentials: 'include', // Gửi cookie để backend nhận session
       });
@@ -199,7 +199,7 @@ export default function NotificationsPage() {
                   <SelectValue placeholder="Tất cả" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all_targets">Tất cả</SelectItem>
+                  <SelectItem value="">Tất cả</SelectItem>
                   <SelectItem value="staff">Nhân viên</SelectItem>
                   <SelectItem value="customer">Khách hàng</SelectItem>
                   <SelectItem value="all">Tất cả đối tượng</SelectItem>
@@ -284,4 +284,4 @@ export default function NotificationsPage() {
       </Dialog>
     </div>
   );
-} 
+}
