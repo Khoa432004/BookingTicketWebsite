@@ -4,9 +4,10 @@
   // For getting base URL
   export const getBaseUrl = (): string => {
     const currentEnv = getCurrentEnvironment();
-    let baseUrl = getApiBaseUrl();
+    const baseUrl = getApiBaseUrl();
     
-    console.log('Adjusted base URL:', baseUrl);
+    console.log('Current environment in auth:', currentEnv);
+    console.log('Adjusted base URL in auth:', baseUrl);
     return baseUrl;
   };
 
