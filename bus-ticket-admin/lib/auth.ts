@@ -8,7 +8,7 @@ export const getBaseUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080';
   } else if (currentEnv === Environment.VERCEL) {
-    return 'https://booking-ticket-website-8ybe.vercel.app'; // Trả về URL gốc của backend
+    return 'https://bookingticketwebsite.onrender.com'; // Trỏ đến backend trên Render
   } else {
     return 'https://bookingticketwebsite.onrender.com';
   }
@@ -21,7 +21,7 @@ const getLoginUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080/admin/dang-nhap';
   } else if (currentEnv === Environment.VERCEL) {
-    return 'https://booking-ticket-website-8ybe.vercel.app/admin/dang-nhap'; // Sửa để trỏ thẳng đến backend
+    return 'https://bookingticketwebsite.onrender.com/admin/dang-nhap';
   } else {
     return 'https://bookingticketwebsite.onrender.com/admin/dang-nhap';
   }
@@ -34,7 +34,7 @@ const getLogoutUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080/admin/dang-xuat';
   } else if (currentEnv === Environment.VERCEL) {
-    return 'https://booking-ticket-website-8ybe.vercel.app/admin/dang-xuat'; // Sửa để trỏ thẳng đến backend
+    return 'https://bookingticketwebsite.onrender.com/admin/dang-xuat';
   } else {
     return 'https://bookingticketwebsite.onrender.com/admin/dang-xuat';
   }
