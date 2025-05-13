@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Bell, Globe, Menu, User } from "lucide-react"
+import { Bell, Globe, Menu, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,10 +14,38 @@ import {
 import { useSidebar } from "@/components/sidebar-provider"
 import { NotificationPanel } from "@/components/notification-panel"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { logout } from "@/lib/auth"
+import { toast } from "@/components/ui/use-toast"
 
 export function Header() {
   const { toggle } = useSidebar()
   const [showNotifications, setShowNotifications] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      // const result = await logout()
+      // if (result.success) {
+      //   toast({
+      //     title: "Đăng xuất thành công",
+      //     description: "Bạn đã đăng xuất khỏi hệ thống",
+      //   })
+        window.location.href = "http://localhost:3000"
+      // } else {
+      //   toast({
+      //     title: "Đăng xuất thất bại",
+      //     description: result.message,
+      //     variant: "destructive",
+      //   })
+      // }
+    } catch (error) {
+      console.error("Logout error:", error)
+      toast({
+        title: "Lỗi",
+        description: "Có lỗi xảy ra khi đăng xuất",
+        variant: "destructive",
+      })
+    }
+  }
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
@@ -69,7 +97,10 @@ export function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem>Cài đặt</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Đăng xuất</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Trang chủ</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

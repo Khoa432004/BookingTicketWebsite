@@ -1,4 +1,4 @@
-// File: D:\HK2\Do an Banvexe HOST\BookingTicketWebsite\bus-ticket-admin\app\layout.tsx
+// File: C:\Users\thanh\OneDrive\Desktop\UTE\Nam3\HK2\CNPM\Project\BookingTicketWebsite\bus-ticket-admin\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
