@@ -29,7 +29,7 @@ export function Header() {
       //     title: "Đăng xuất thành công",
       //     description: "Bạn đã đăng xuất khỏi hệ thống",
       //   })
-        window.location.href = "http://localhost:3000"
+        window.location.href = "https://booking-ticket-website-silk.vercel.app"
       // } else {
       //   toast({
       //     title: "Đăng xuất thất bại",
