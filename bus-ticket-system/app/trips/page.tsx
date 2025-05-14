@@ -156,8 +156,8 @@ export default function TripsPage() {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
       }
-      await response.json(); // Không cần lưu dữ liệu trả về
-      fetchTrips(); // Tải lại danh sách chuyến đi
+      await response.json();
+      await fetchTrips();
       toast({
         title: 'Thành công',
         description: 'Chuyến xe đã được tạo',
@@ -186,8 +186,8 @@ export default function TripsPage() {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
       }
-      await response.json(); // Không cần lưu dữ liệu trả về
-      fetchTrips(); // Tải lại danh sách chuyến đi
+      await response.json();
+      await fetchTrips();
       toast({
         title: 'Thành công',
         description: 'Chuyến xe đã được cập nhật',
