@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getBaseUrl } from "@/lib/auth";
 
 // Định nghĩa interface cho Notification
 interface Notification {
@@ -40,8 +39,8 @@ export function NotificationForm({ onSubmit, notification = null }: Notification
     try {
       const isEditMode = notification !== null;
       const url = isEditMode
-        ? `${getBaseUrl()}/api/notifications/${notification.id}` // Sử dụng proxy
-        : `${getBaseUrl()}/api/notifications`; // Sử dụng proxy
+        ? `https://bookingticketwebsite.onrender.com/api/notifications/${notification.id}` // Gọi trực tiếp backend
+        : `https://bookingticketwebsite.onrender.com/api/notifications`; // Gọi trực tiếp backend
       const method = isEditMode ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
