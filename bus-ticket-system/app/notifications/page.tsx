@@ -51,7 +51,7 @@ export default function NotificationsPage() {
       try {
         const baseUrl = getBaseUrl();
         console.log('Fetching from:', `${baseUrl}/notifications`); // Debug URL
-        const response = await fetch(`${baseUrl}/notifications`, {
+        const response = await fetch('https://bookingticketwebsite.onrender.com/api/notifications', {
           method: 'GET',
           credentials: 'include', // Gửi cookie để backend nhận session
         });
