@@ -43,45 +43,38 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const baseUrl = getBaseUrl();
-        console.log('Fetching from:', `${baseUrl}/notifications`); // Debug URL
-        const userId = localStorage.getItem('userId'); // Lấy userId từ localStorage
+useEffect(() => {
+  const fetchNotifications = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const baseUrl = getBaseUrl();
+      console.log('Fetching from:', `${baseUrl}/notifications`);
+      const response = await fetch('https://bookingticketwebsite.onrender.com/api/notifications', {
+        method: 'GET',
+        // Loại bỏ headers: { 'X-User-Id': userId } vì không cần
+      });
 
-        const response = await fetch('https://bookingticketwebsite.onrender.com/api/notifications', {
-          method: 'GET',
-          credentials: 'include', // Gửi cookie nếu có
-          headers: userId ? { 'X-User-Id': userId } : {}, // Gửi userId qua header (tùy chọn)
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `Lỗi khi lấy danh sách thông báo: ${response.status} - ${response.statusText}`);
-        }
-
-        const data: Notification[] = await response.json();
-        setNotifications(data);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setError(error.message);
-          // Nếu không có session, thử lấy thông báo công khai hoặc yêu cầu đăng nhập lại
-          if (error.message.includes('Không tìm thấy phiên đăng nhập')) {
-            setError('Vui lòng đăng nhập lại để xem thông báo.');
-          }
-        } else {
-          setError('Đã xảy ra lỗi không xác định');
-        }
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
       }
-    };
 
-    fetchNotifications();
-  }, []);
+      const data: Notification[] = await response.json();
+      setNotifications(data);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Đã xảy ra lỗi không xác định');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchNotifications();
+}, []);
 
   const handleView = (notification: Notification) => {
     setSelectedNotification(notification);

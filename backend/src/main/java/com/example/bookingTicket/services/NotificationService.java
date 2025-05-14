@@ -266,32 +266,26 @@ public class NotificationService {
         return map;
     }
 
-    @Transactional
-    public void markAsRead(String notificationId, HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            throw new IllegalArgumentException("Không tìm thấy phiên đăng nhập hoặc userId");
+
+        public List<Map<String, Object>> getAllNotifications() {
+            try {
+                System.out.println("Inside getAllNotifications at " + new java.util.Date());
+                List<NotifiByOwner> notifications = notifiByOwnerRepository.findAll();
+                System.out.println("Notifications fetched: " + (notifications != null ? notifications.size() : 0));
+                return notifications.stream().map(notification -> {
+                    Map<String, Object> notificationMap = new HashMap<>();
+                    notificationMap.put("id", notification.getNotifiId());
+                    notificationMap.put("title", notification.getTitle());
+                    notificationMap.put("content", notification.getContent());
+                    notificationMap.put("target", notification.getReceiving());
+                    notificationMap.put("createdAt", notification.getDate().toString());
+                    // Loại bỏ "read" vì không cần đánh dấu đã xem
+                    return notificationMap;
+                }).collect(Collectors.toList());
+            } catch (Exception e) {
+                System.out.println("Error in getAllNotifications: " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException("Lỗi khi lấy thông báo: " + e.getMessage(), e);
+            }
         }
-
-        Integer userId = ((Integer) session.getAttribute("userId")).intValue();
-        Account account = accountRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản: " + userId));
-
-        Notification notification = notifiByOwnerRepository.findByNotifiId(notificationId)
-                .orElseThrow(() -> new IllegalArgumentException("Thông báo không tồn tại: " + notificationId));
-
-        // Chỉ đánh dấu là đã đọc cho người dùng hiện tại
-        Optional<UserNotification> userNotification = userNotificationRepository
-                .findByAccountAndNotification(account, notification);
-        userNotification.ifPresent(un -> {
-            un.setRead(true);
-            userNotificationRepository.save(un);
-        });
-    }
-
-    public List<Map<String, Object>> getNotificationsForUserById(Long userId) {
-        Account account = accountRepository.findById(userId.intValue()) // Ép Long sang Integer
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản: " + userId));
-        return getNotificationsForUser(account.getUserName());
-    }
 }
