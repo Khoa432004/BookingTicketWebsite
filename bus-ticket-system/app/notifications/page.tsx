@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { NotificationForm } from "@/components/notifications/notification-form";
 import { NotificationDetails } from "@/components/notifications/notification-details";
-import { getBaseUrl } from "@/lib/auth"
+import { getBaseUrl } from "@/lib/auth";
 
 // Định nghĩa interface cho Notification
 interface Notification {
@@ -49,14 +49,16 @@ export default function NotificationsPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${getBaseUrl()}/notifications`, {
+        const baseUrl = getBaseUrl();
+        console.log('Fetching from:', `${baseUrl}/notifications`); // Debug URL
+        const response = await fetch(`${baseUrl}/notifications`, {
           method: 'GET',
           credentials: 'include', // Gửi cookie để backend nhận session
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `Lỗi khi lấy danh sách thông báo: ${response.statusText}`);
+          const errorData = await response.json().catch(() => ({})); // Xử lý trường hợp JSON lỗi
+          throw new Error(errorData.error || `Lỗi khi lấy danh sách thông báo: ${response.status} - ${response.statusText}`);
         }
 
         const data: Notification[] = await response.json();
@@ -87,14 +89,15 @@ export default function NotificationsPage() {
 
   const handleDelete = async (notificationId: string) => {
     try {
-      const response = await fetch(`${getBaseUrl()}/notifications/${notificationId}`, {
+      const baseUrl = getBaseUrl();
+      const response = await fetch(`${baseUrl}/notifications/${notificationId}`, {
         method: 'DELETE',
         credentials: 'include', // Gửi cookie để backend nhận session
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `Lỗi khi xóa thông báo: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({})); // Xử lý trường hợp JSON lỗi
+        throw new Error(errorData.error || `Lỗi khi xóa thông báo: ${response.status} - ${response.statusText}`);
       }
 
       // Cập nhật danh sách sau khi xóa
@@ -284,4 +287,4 @@ export default function NotificationsPage() {
       </Dialog>
     </div>
   );
-} 
+}
