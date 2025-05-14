@@ -8,7 +8,7 @@ export const getBaseUrl = (): string => {
   if (currentEnv === Environment.LOCAL) {
     return 'http://localhost:8080';
   } else if (currentEnv === Environment.VERCEL) {
-    return '/api/proxy'; 
+    return '/api'; 
   } else {
     return 'https://bookingticketwebsite.onrender.com';
   }
