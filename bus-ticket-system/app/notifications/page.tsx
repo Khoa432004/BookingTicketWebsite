@@ -88,17 +88,14 @@ useEffect(() => {
 
   const handleDelete = async (notificationId: string) => {
     try {
-      const baseUrl = getBaseUrl();
-      const response = await fetch(`${baseUrl}/notifications/${notificationId}`, {
+      const response = await fetch(`https://bookingticketwebsite.onrender.com/api/notifications/${notificationId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Lỗi khi xóa thông báo: ${response.status} - ${response.statusText}`);
       }
-
       setNotifications(notifications.filter((notification) => notification.id !== notificationId));
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -108,7 +105,6 @@ useEffect(() => {
       }
     }
   };
-
   const handleCreateNotification = (newNotification: Notification) => {
     setNotifications([...notifications, newNotification]);
     setIsAddDialogOpen(false);
