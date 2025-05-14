@@ -136,13 +136,13 @@ public class TripController {
     }
 
     // API xóa chuyến xe
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteTrip(@PathVariable Long id) {
-        tripService.deleteTrip(id);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Chuyến xe đã được xóa thành công");
-        return ResponseEntity.ok(response);
-    }
+        @DeleteMapping("/trips/{id}")
+        public ResponseEntity<Map<String, Object>> deleteTrip(@PathVariable Long id) {
+                tripService.deleteTrip(id);
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Chuyến xe đã được xóa thành công");
+                return ResponseEntity.ok(response);
+            }
 
     // Endpoint để lấy danh sách xe buýt, trả về BusDTO
     @GetMapping("/trips/buses")
