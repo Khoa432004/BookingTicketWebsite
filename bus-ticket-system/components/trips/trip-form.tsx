@@ -46,7 +46,6 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
   const [buses, setBuses] = useState<Bus[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Lấy danh sách xe bus từ backend
   useEffect(() => {
     const fetchBuses = async () => {
       try {
@@ -82,7 +81,6 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form
     if (
       !formData.tripId ||
       !formData.busId ||
@@ -103,12 +101,10 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
     setLoading(true);
 
     try {
-      // Kết hợp date và time để tạo departureTime
       const [hours, minutes] = formData.time.split(':').map(Number);
       const departureDateTime = new Date(formData.date);
       departureDateTime.setHours(hours, minutes, 0, 0);
 
-      // Tạo arrivalTime (giả định arrivalTime cách departureTime 5 giờ)
       const arrivalDateTime = new Date(departureDateTime);
       arrivalDateTime.setHours(arrivalDateTime.getHours() + 5);
 
@@ -124,8 +120,7 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
       };
 
       if (isEditing) {
-        // Cập nhật chuyến xe
-        const response = await fetch(`https://bookingticketwebsite.onrender.com/api/trips/${trip.id}`, {
+        const response = await fetch(`https://bookingticketwebsite.onrender.com/api/trips/${trip.id}?busId=${formData.busId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -138,13 +133,12 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
           throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
         }
       } else {
-        // Tạo mới chuyến xe
-        const response = await fetch('https://bookingticketwebsite.onrender.com/api/trips', {
+        const response = await fetch(`https://bookingticketwebsite.onrender.com/api/trips?busId=${formData.busId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ ...tripData, busId: formData.busId }),
+          body: JSON.stringify(tripData),
           credentials: 'include',
         });
         if (!response.ok) {
@@ -171,7 +165,6 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
     }
   };
 
-  // Dữ liệu mẫu cho busTypes và locations (nên thay bằng API từ backend)
   const busTypes = ['Limousine', 'Giường nằm', 'Ghế ngồi'];
   const locations = ['Hà Nội', 'Hải Phòng', 'Nam Định', 'Thanh Hóa', 'Ninh Bình', 'Quảng Ninh'];
 
