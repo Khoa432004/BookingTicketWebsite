@@ -174,6 +174,9 @@ export default function TripsPage() {
 
   const handleUpdateTrip = async (updatedTrip: any) => {
     try {
+      if (!updatedTrip.id) {
+        throw new Error('ID chuyến đi không hợp lệ');
+      }
       const response = await fetch(`https://bookingticketwebsite.onrender.com/api/trips/${updatedTrip.id}?busId=${updatedTrip.bus.id}`, {
         method: 'PUT',
         headers: {
