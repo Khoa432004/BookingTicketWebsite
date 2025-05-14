@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
@@ -17,10 +17,11 @@ type Notification = {
   time: string
   read: boolean
   fullContent?: string
-  target: string
-  createdAt: Date
+  target: string // Thêm để lọc thông báo cho staff/all
+  createdAt: Date // Thêm để lưu thời gian gốc, dùng cho việc lọc
 }
 
+// Kiểu dữ liệu từ API
 type ApiNotification = {
   id: string;
   title: string;
@@ -75,7 +76,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
             read: item.read || false,
             fullContent: item.content,
             target: item.target.toLowerCase(),
-            createdAt: createdAtDate,
+            createdAt: createdAtDate, // Lưu thời gian gốc
           };
         });
 
@@ -98,23 +99,30 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
   }, []);
 
   const filteredNotifications = notifications.filter((notification) => {
+    // Lọc theo target: chỉ hiển thị thông báo dành cho "staff" hoặc "all"
     const isTargetMatch = notification.target === "staff" || notification.target === "all";
+
+    // Lọc theo trạng thái đọc: nếu showUnreadOnly = true, chỉ hiển thị thông báo chưa đọc
     const isReadMatch = showUnreadOnly ? !notification.read : true;
 
-    const now = new Date();
+    // Lọc theo thời gian
+    const now = new Date(); // Ngày hiện tại: 01/05/2025
     let isTimeMatch = true;
 
     if (timeFilter !== "all") {
       const notificationDate = notification.createdAt;
 
       if (timeFilter === "today") {
+        // Hôm nay: chỉ lấy thông báo trong ngày 01/05/2025
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         isTimeMatch = notificationDate >= todayStart;
       } else if (timeFilter === "week") {
+        // 7 ngày qua: từ 25/04/2025 đến 01/05/2025
         const weekStart = new Date(now);
         weekStart.setDate(now.getDate() - 7);
         isTimeMatch = notificationDate >= weekStart;
       } else if (timeFilter === "month") {
+        // Tháng này: từ 01/05/2025 đến 31/05/2025
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
         isTimeMatch = notificationDate >= monthStart;
       }
@@ -122,6 +130,28 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
 
     return isTargetMatch && isReadMatch && isTimeMatch;
   });
+
+  const handleReadFull = async (notification: Notification) => {
+    setSelectedNotification(notification);
+
+    // Gọi API để đánh dấu thông báo là đã đọc
+    try {
+      await axios.put(
+        `http://localhost:8080/notifications/${notification.id}/read`,
+        {},
+        { withCredentials: true }
+      );
+
+      // Cập nhật trạng thái read trong state
+      setNotifications((prev) =>
+        prev.map((item) =>
+          item.id === notification.id ? { ...item, read: true } : item
+        )
+      );
+    } catch (err) {
+      console.error("Error marking notification as read:", err);
+    }
+  };
 
   return (
     <div
@@ -185,7 +215,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
                   {truncateText(notification.content, 40)}
                 </p>
                 <div className="mt-2 flex justify-end">
-                  <Button variant="outline" size="sm" onClick={() => setSelectedNotification(notification)}>
+                  <Button variant="outline" size="sm" onClick={() => handleReadFull(notification)}>
                     Xem chi tiết
                   </Button>
                 </div>
