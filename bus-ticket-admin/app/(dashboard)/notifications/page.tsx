@@ -49,7 +49,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
     const fetchNotifications = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ApiNotification[]>("https://bookingticketwebsite.onrender.com/notifications", {
+        const response = await axios.get<ApiNotification[]>("https://bookingticketwebsite.onrender.com/api/notifications", {
           withCredentials: true,
         });
 
@@ -123,28 +123,6 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
     return isTargetMatch && isReadMatch && isTimeMatch;
   });
 
-  const handleReadFull = async (notification: Notification) => {
-    setSelectedNotification(notification);
-
-    // Gọi API để đánh dấu thông báo là đã đọc
-    try {
-      await axios.put(
-        `https://bookingticketwebsite.onrender.com/notifications/${notification.id}/read`,
-        {},
-        { withCredentials: true }
-      );
-
-      // Cập nhật trạng thái read trong state
-      setNotifications((prev) =>
-        prev.map((item) =>
-          item.id === notification.id ? { ...item, read: true } : item
-        )
-      );
-    } catch (err) {
-      console.error("Error marking notification as read:", err);
-    }
-  };
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-end bg-black/50 md:items-center md:justify-center"
@@ -207,7 +185,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
                   {truncateText(notification.content, 40)}
                 </p>
                 <div className="mt-2 flex justify-end">
-                  <Button variant="outline" size="sm" onClick={() => handleReadFull(notification)}>
+                  <Button variant="outline" size="sm" onClick={() => setSelectedNotification(notification)}>
                     Xem chi tiết
                   </Button>
                 </div>
