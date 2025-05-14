@@ -54,39 +54,39 @@ export default function TripsPage() {
   const [buses, setBuses] = useState<BusDTO[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchTrips = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch('https://bookingticketwebsite.onrender.com/api/trips', {
-          method: 'GET',
-          credentials: 'include',
-        });
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
-        }
-        const data: Trip[] = await response.json();
-        setTrips(data);
-        if (data.length === 0) {
-          toast({
-            title: 'Thông báo',
-            description: 'Không có chuyến đi nào trong hệ thống',
-            variant: 'default',
-          });
-        }
-      } catch (error: any) {
-        console.error('Error fetching trips:', error);
-        toast({
-          title: 'Lỗi',
-          description: error.message || 'Không thể tải danh sách chuyến đi',
-          variant: 'destructive',
-        });
-      } finally {
-        setLoading(false);
+  const fetchTrips = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://bookingticketwebsite.onrender.com/api/trips', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
       }
-    };
+      const data: Trip[] = await response.json();
+      setTrips(data);
+      if (data.length === 0) {
+        toast({
+          title: 'Thông báo',
+          description: 'Không có chuyến đi nào trong hệ thống',
+          variant: 'default',
+        });
+      }
+    } catch (error: any) {
+      console.error('Error fetching trips:', error);
+      toast({
+        title: 'Lỗi',
+        description: error.message || 'Không thể tải danh sách chuyến đi',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     const fetchBuses = async () => {
       try {
         const response = await fetch('https://bookingticketwebsite.onrender.com/api/trips/buses', {
@@ -156,8 +156,8 @@ export default function TripsPage() {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
       }
-      const data = await response.json();
-      setTrips([...trips, data.trip]);
+      await response.json(); // Không cần lưu dữ liệu trả về
+      fetchTrips(); // Tải lại danh sách chuyến đi
       toast({
         title: 'Thành công',
         description: 'Chuyến xe đã được tạo',
@@ -186,8 +186,8 @@ export default function TripsPage() {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Lỗi: ${response.status} - ${response.statusText}`);
       }
-      const data = await response.json();
-      setTrips(trips.map((trip) => (trip.id === updatedTrip.id ? data.trip : trip)));
+      await response.json(); // Không cần lưu dữ liệu trả về
+      fetchTrips(); // Tải lại danh sách chuyến đi
       toast({
         title: 'Thành công',
         description: 'Chuyến xe đã được cập nhật',
