@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
 import axios from "axios"
-import { getBaseUrl } from "@/lib/auth"
 
 type Notification = {
   id: string
@@ -18,11 +17,10 @@ type Notification = {
   time: string
   read: boolean
   fullContent?: string
-  target: string // Thêm để lọc thông báo cho staff/all
-  createdAt: Date // Thêm để lưu thời gian gốc, dùng cho việc lọc
+  target: string
+  createdAt: Date
 }
 
-// Kiểu dữ liệu từ API
 type ApiNotification = {
   id: string;
   title: string;
@@ -51,7 +49,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
     const fetchNotifications = async () => {
       try {
         setLoading(true);
-        const response = await axios.get<ApiNotification[]>(`${getBaseUrl()}/notifications`, {
+        const response = await axios.get<ApiNotification[]>("https://bookingticketwebsite.onrender.com/notifications", {
           withCredentials: true,
         });
 
@@ -77,7 +75,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
             read: item.read || false,
             fullContent: item.content,
             target: item.target.toLowerCase(),
-            createdAt: createdAtDate, // Lưu thời gian gốc
+            createdAt: createdAtDate,
           };
         });
 
@@ -100,30 +98,23 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
   }, []);
 
   const filteredNotifications = notifications.filter((notification) => {
-    // Lọc theo target: chỉ hiển thị thông báo dành cho "staff" hoặc "all"
     const isTargetMatch = notification.target === "staff" || notification.target === "all";
-
-    // Lọc theo trạng thái đọc: nếu showUnreadOnly = true, chỉ hiển thị thông báo chưa đọc
     const isReadMatch = showUnreadOnly ? !notification.read : true;
 
-    // Lọc theo thời gian
-    const now = new Date(); // Ngày hiện tại: 01/05/2025
+    const now = new Date();
     let isTimeMatch = true;
 
     if (timeFilter !== "all") {
       const notificationDate = notification.createdAt;
 
       if (timeFilter === "today") {
-        // Hôm nay: chỉ lấy thông báo trong ngày 01/05/2025
         const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         isTimeMatch = notificationDate >= todayStart;
       } else if (timeFilter === "week") {
-        // 7 ngày qua: từ 25/04/2025 đến 01/05/2025
         const weekStart = new Date(now);
         weekStart.setDate(now.getDate() - 7);
         isTimeMatch = notificationDate >= weekStart;
       } else if (timeFilter === "month") {
-        // Tháng này: từ 01/05/2025 đến 31/05/2025
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
         isTimeMatch = notificationDate >= monthStart;
       }
@@ -138,7 +129,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
     // Gọi API để đánh dấu thông báo là đã đọc
     try {
       await axios.put(
-        `${getBaseUrl()}/notifications/${notification.id}/read`,
+        `https://bookingticketwebsite.onrender.com/notifications/${notification.id}/read`,
         {},
         { withCredentials: true }
       );
