@@ -24,7 +24,6 @@ import { Label } from '@/components/ui/label';
 import { TripForm } from '@/components/trips/trip-form';
 import { toast } from '@/hooks/use-toast';
 
-// Định nghĩa interface cho Trip dựa trên dữ liệu từ backend (TripDTO)
 interface Trip {
   id: number;
   tripId: string;
@@ -55,7 +54,6 @@ export default function TripsPage() {
   const [buses, setBuses] = useState<BusDTO[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Lấy danh sách chuyến đi từ backend
   useEffect(() => {
     const fetchTrips = async () => {
       setLoading(true);
@@ -144,17 +142,14 @@ export default function TripsPage() {
     }
   };
 
-  const handleCreateTrip = async (newTrip: Trip) => {
+  const handleCreateTrip = async (newTrip: any) => {
     try {
-      const response = await fetch('https://bookingticketwebsite.onrender.com/api/trips', {
+      const response = await fetch(`https://bookingticketwebsite.onrender.com/api/trips?busId=${newTrip.bus.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...newTrip,
-          busId: newTrip.bus.id,
-        }),
+        body: JSON.stringify(newTrip),
         credentials: 'include',
       });
       if (!response.ok) {
@@ -177,17 +172,14 @@ export default function TripsPage() {
     }
   };
 
-  const handleUpdateTrip = async (updatedTrip: Trip) => {
+  const handleUpdateTrip = async (updatedTrip: any) => {
     try {
-      const response = await fetch(`https://bookingticketwebsite.onrender.com/api/trips/${updatedTrip.id}`, {
+      const response = await fetch(`https://bookingticketwebsite.onrender.com/api/trips/${updatedTrip.id}?busId=${updatedTrip.bus.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...updatedTrip,
-          busId: updatedTrip.bus.id,
-        }),
+        body: JSON.stringify(updatedTrip),
         credentials: 'include',
       });
       if (!response.ok) {
@@ -245,25 +237,12 @@ export default function TripsPage() {
               <DialogTitle>Thêm chuyến đi mới</DialogTitle>
               <DialogDescription>Điền đầy đủ thông tin để tạo chuyến đi mới</DialogDescription>
             </DialogHeader>
-            <TripForm onSubmit={() => {
-              setIsAddDialogOpen(false);
-              const fetchTrips = async () => {
-                try {
-                  const response = await fetch('https://bookingticketwebsite.onrender.com/api/trips', {
-                    method: 'GET',
-                    credentials: 'include',
-                  });
-                  if (!response.ok) {
-                    throw new Error(`Lỗi: ${response.status} - ${response.statusText}`);
-                  }
-                  const data: Trip[] = await response.json();
-                  setTrips(data);
-                } catch (error) {
-                  console.error('Error fetching trips:', error);
-                }
-              };
-              fetchTrips();
-            }} />
+            <TripForm
+              onSubmit={(newTrip) => {
+                setIsAddDialogOpen(false);
+                handleCreateTrip(newTrip);
+              }}
+            />
           </DialogContent>
         </Dialog>
       </div>
@@ -400,24 +379,9 @@ export default function TripsPage() {
           {selectedTrip && (
             <TripForm
               trip={selectedTrip}
-              onSubmit={() => {
+              onSubmit={(updatedTrip) => {
                 setIsEditDialogOpen(false);
-                const fetchTrips = async () => {
-                  try {
-                    const response = await fetch('https://bookingticketwebsite.onrender.com/api/trips', {
-                      method: 'GET',
-                      credentials: 'include',
-                    });
-                    if (!response.ok) {
-                      throw new Error(`Lỗi: ${response.status} - ${response.statusText}`);
-                    }
-                    const data: Trip[] = await response.json();
-                    setTrips(data);
-                  } catch (error) {
-                    console.error('Error fetching trips:', error);
-                  }
-                };
-                fetchTrips();
+                handleUpdateTrip(updatedTrip);
               }}
             />
           )}

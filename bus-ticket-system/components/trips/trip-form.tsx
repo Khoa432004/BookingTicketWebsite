@@ -17,7 +17,7 @@ import { toast } from '@/hooks/use-toast';
 
 interface TripFormProps {
   trip?: any;
-  onSubmit: () => void;
+  onSubmit: (tripData: any) => void; // Cập nhật để nhận dữ liệu
 }
 
 interface Bus {
@@ -117,6 +117,7 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
         busType: formData.busType,
         price: parseFloat(formData.price),
         availableSeats: parseInt(formData.seats, 10),
+        bus: { id: parseInt(formData.busId, 10) }, // Thêm trường bus để khớp với interface Trip
       };
 
       if (isEditing) {
@@ -152,7 +153,7 @@ export function TripForm({ trip, onSubmit }: TripFormProps) {
         description: `Chuyến xe ${formData.tripId} đã được ${isEditing ? 'cập nhật' : 'thêm'} vào hệ thống`,
       });
 
-      onSubmit();
+      onSubmit(tripData); // Truyền tripData về TripsPage
     } catch (error: any) {
       console.error('Error saving trip:', error);
       toast({
