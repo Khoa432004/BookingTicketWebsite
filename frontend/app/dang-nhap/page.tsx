@@ -1,103 +1,104 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import Link from "next/link"
-import Image from "next/image"
-import { Eye, EyeOff } from "lucide-react"
-import dynamic from "next/dynamic"
-import { login } from "@/lib/auth"
-import { Environment, getCurrentEnvironment } from "@/services/env"
+import type React from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Eye, EyeOff } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { login } from '@/lib/auth';
+import { Environment, getCurrentEnvironment } from '@/services/env';
 
 const LoginPage = () => {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState("login")
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('login');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({
-    password: "",
-    name: "",
-  })
+    password: '',
+    name: '',
+  });
   const [registerData, setRegisterData] = useState({
-    phone: "",
-    name: "",
-  })
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+    phone: '',
+    name: '',
+  });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Function to get base URL based on environment
   const getRedirectUrl = (port: string): string => {
     const currentEnv = getCurrentEnvironment();
     if (currentEnv === Environment.LOCAL) {
       return `http://localhost:${port}`;
     } else if (currentEnv === Environment.VERCEL) {
-      // For Vercel environment, you need to specify the correct URLs for owner and staff
-      // Replace these with your actual URLs
-      if (port === "3001") {
-        return `https://booking-ticket-website-8ybe.vercel.app/`; // Replace with actual owner URL
+      if (port === '3001') {
+        return `https://booking-ticket-website-8ybe.vercel.app/`; // Trang thông báo
       } else {
-        return `https://booking-ticket-website-tyxb.vercel.app/dashboard`; // Replace with actual staff URL
+        return `https://booking-ticket-website-tyxb.vercel.app/dashboard`; // Trang staff
       }
     } else {
-      // Production URLs
       return `https://bookingticketwebsite-${port}.onrender.com`;
     }
   };
 
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setLoginData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setLoginData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setRegisterData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setRegisterData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage("");
+    setErrorMessage('');
     setIsLoading(true);
-  
+
     try {
       const result = await login(loginData.name, loginData.password);
-      
+
       if (result.success) {
+        // Lưu thông tin vào localStorage
+        localStorage.setItem('userId', result.userId.toString());
+        localStorage.setItem('userName', result.userName);
+        localStorage.setItem('userType', result.userType);
+
         setTimeout(() => {
-          switch(result.userType) {
-            case "OWNER":
-              window.location.href = getRedirectUrl("3001");
+          switch (result.userType) {
+            case 'OWNER':
+              window.location.href = getRedirectUrl('3001');
               break;
-            case "STAFF":
-              window.location.href = getRedirectUrl("3002");
+            case 'STAFF':
+              window.location.href = getRedirectUrl('3002');
               break;
             default:
-              router.push("/");
+              router.push('/');
           }
         }, 300);
       } else {
         setErrorMessage(result.message);
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setErrorMessage("Không thể kết nối đến server");
+      console.error('Login error:', error);
+      setErrorMessage('Không thể kết nối đến server');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log("Register with:", registerData)
-    router.push("/dang-ky/xac-thuc")
-  }
+    e.preventDefault();
+    console.log('Register with:', registerData);
+    router.push('/dang-ky/xac-thuc');
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -149,7 +150,7 @@ const LoginPage = () => {
                           <Input
                             id="password"
                             name="password"
-                            type={showPassword ? "text" : "password"}
+                            type={showPassword ? 'text' : 'password'}
                             placeholder="Nhập mật khẩu"
                             value={loginData.password}
                             onChange={handleLoginChange}
@@ -173,12 +174,12 @@ const LoginPage = () => {
 
                       {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
 
-                      <Button 
-                        type="submit" 
+                      <Button
+                        type="submit"
                         className="w-full bg-futa-orange hover:bg-futa-orange/90"
                         disabled={isLoading}
                       >
-                        {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+                        {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                       </Button>
 
                       <div className="text-center">
@@ -241,8 +242,9 @@ const LoginPage = () => {
       </main>
       <Footer />
     </div>
-  )
-}
+  );
 
-// Vô hiệu hóa SSR cho trang này
-export default dynamic(() => Promise.resolve(LoginPage), { ssr: false })
+  // Vô hiệu hóa SSR cho trang này
+};
+
+export default dynamic(() => Promise.resolve(LoginPage), { ssr: false });

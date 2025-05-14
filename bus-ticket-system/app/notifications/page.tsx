@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { Edit, Eye, Plus, Search, Trash } from "lucide-react";
-import { format } from "date-fns";
-import { vi } from "date-fns/locale";
+import { useState, useEffect } from 'react';
+import { Edit, Eye, Plus, Search, Trash } from 'lucide-react';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -16,25 +16,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { NotificationForm } from "@/components/notifications/notification-form";
-import { NotificationDetails } from "@/components/notifications/notification-details";
-import { getBaseUrl } from "@/lib/auth";
+} from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { NotificationForm } from '@/components/notifications/notification-form';
+import { NotificationDetails } from '@/components/notifications/notification-details';
+import { getBaseUrl } from '@/lib/auth';
 
-// Định nghĩa interface cho Notification
 interface Notification {
   id: string;
   title: string;
   content: string;
   target: string;
   createdAt: string;
+  read?: boolean; // Thêm thuộc tính read nếu backend trả về
 }
 
 export default function NotificationsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [targetFilter, setTargetFilter] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [targetFilter, setTargetFilter] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -43,7 +43,6 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Gọi API để lấy danh sách thông báo khi component mount
   useEffect(() => {
     const fetchNotifications = async () => {
       setLoading(true);
@@ -51,13 +50,16 @@ export default function NotificationsPage() {
       try {
         const baseUrl = getBaseUrl();
         console.log('Fetching from:', `${baseUrl}/notifications`); // Debug URL
+        const userId = localStorage.getItem('userId'); // Lấy userId từ localStorage
+
         const response = await fetch('https://bookingticketwebsite.onrender.com/api/notifications', {
           method: 'GET',
-          credentials: 'include', // Gửi cookie để backend nhận session
+          credentials: 'include', // Gửi cookie nếu có
+          headers: userId ? { 'X-User-Id': userId } : {}, // Gửi userId qua header (tùy chọn)
         });
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({})); // Xử lý trường hợp JSON lỗi
+          const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.error || `Lỗi khi lấy danh sách thông báo: ${response.status} - ${response.statusText}`);
         }
 
@@ -66,6 +68,10 @@ export default function NotificationsPage() {
       } catch (error: unknown) {
         if (error instanceof Error) {
           setError(error.message);
+          // Nếu không có session, thử lấy thông báo công khai hoặc yêu cầu đăng nhập lại
+          if (error.message.includes('Không tìm thấy phiên đăng nhập')) {
+            setError('Vui lòng đăng nhập lại để xem thông báo.');
+          }
         } else {
           setError('Đã xảy ra lỗi không xác định');
         }
@@ -92,15 +98,14 @@ export default function NotificationsPage() {
       const baseUrl = getBaseUrl();
       const response = await fetch(`${baseUrl}/notifications/${notificationId}`, {
         method: 'DELETE',
-        credentials: 'include', // Gửi cookie để backend nhận session
+        credentials: 'include',
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({})); // Xử lý trường hợp JSON lỗi
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `Lỗi khi xóa thông báo: ${response.status} - ${response.statusText}`);
       }
 
-      // Cập nhật danh sách sau khi xóa
       setNotifications(notifications.filter((notification) => notification.id !== notificationId));
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -112,12 +117,11 @@ export default function NotificationsPage() {
   };
 
   const handleCreateNotification = (newNotification: Notification) => {
-    setNotifications([...notifications, newNotification]); // Thêm thông báo mới vào danh sách
+    setNotifications([...notifications, newNotification]);
     setIsAddDialogOpen(false);
   };
 
   const handleUpdateNotification = (updatedNotification: Notification) => {
-    // Cập nhật thông báo trong danh sách
     setNotifications(
       notifications.map((notification) =>
         notification.id === updatedNotification.id ? updatedNotification : notification
@@ -138,17 +142,17 @@ export default function NotificationsPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return format(date, "HH:mm - dd/MM/yyyy", { locale: vi });
+    return format(date, 'HH:mm - dd/MM/yyyy', { locale: vi });
   };
 
   const getTargetLabel = (target: string) => {
     switch (target.toLowerCase()) {
-      case "staff":
-        return "Nhân viên";
-      case "customer":
-        return "Khách hàng";
-      case "all":
-        return "Tất cả";
+      case 'staff':
+        return 'Nhân viên';
+      case 'customer':
+        return 'Khách hàng';
+      case 'all':
+        return 'Tất cả';
       default:
         return target;
     }

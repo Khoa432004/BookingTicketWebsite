@@ -273,7 +273,7 @@ public class NotificationService {
             throw new IllegalArgumentException("Không tìm thấy phiên đăng nhập hoặc userId");
         }
 
-        Integer userId = ((Long) session.getAttribute("userId")).intValue();
+        Integer userId = ((Integer) session.getAttribute("userId")).intValue();
         Account account = accountRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản: " + userId));
 
@@ -287,5 +287,11 @@ public class NotificationService {
             un.setRead(true);
             userNotificationRepository.save(un);
         });
+    }
+
+    public List<Map<String, Object>> getNotificationsForUserById(Long userId) {
+        Account account = accountRepository.findById(userId.intValue()) // Ép Long sang Integer
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản: " + userId));
+        return getNotificationsForUser(account.getUserName());
     }
 }

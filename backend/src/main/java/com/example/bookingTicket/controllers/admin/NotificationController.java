@@ -21,23 +21,32 @@ package com.example.bookingTicket.controllers.admin;
 
        // Lấy danh sách thông báo
        @GetMapping("")
-       public ResponseEntity<List<Map<String, Object>>> getNotifications(HttpServletRequest httpServletRequest) {
-           try {
-               System.out.println("Handling GET request for /api/notifications at " + new java.util.Date());
-               HttpSession session = httpServletRequest.getSession(false);
-               System.out.println("Session: " + (session != null ? session.getId() : "null"));
-               if (session != null) {
-                   System.out.println("User ID in session: " + session.getAttribute("userId"));
-               }
+    public ResponseEntity<List<Map<String, Object>>> getNotifications(HttpServletRequest httpServletRequest) {
+        try {
+            System.out.println("Handling GET request for /api/notifications at " + new java.util.Date());
+            HttpSession session = httpServletRequest.getSession(false);
+            System.out.println("Session: " + (session != null ? session.getId() : "null"));
+            Long userIdFromSession = (session != null && session.getAttribute("userId") != null)
+                    ? (Long) session.getAttribute("userId") : null;
 
-               List<Map<String, Object>> notifications = notificationService.getAllNotifications(httpServletRequest);
-               return ResponseEntity.ok(notifications);
-           } catch (Exception e) {
-               e.printStackTrace();
-               return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                       .body(List.of(Map.of("error", "Lỗi khi lấy danh sách thông báo: " + e.getMessage())));
-           }
-       }
+            // Lấy userId từ header nếu session không có
+            String userIdFromHeader = httpServletRequest.getHeader("X-User-Id");
+            Long effectiveUserId = userIdFromSession != null
+                    ? userIdFromSession
+                    : (userIdFromHeader != null ? Long.parseLong(userIdFromHeader) : null);
+
+            if (effectiveUserId == null) {
+                throw new IllegalArgumentException("Không tìm thấy userId trong session hoặc header");
+            }
+
+            List<Map<String, Object>> notifications = notificationService.getNotificationsForUserById(effectiveUserId);
+            return ResponseEntity.ok(notifications);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(List.of(Map.of("error", "Lỗi khi lấy danh sách thông báo: " + e.getMessage())));
+        }
+    }
 
        // Tạo thông báo mới (dành cho Admin)
        @PostMapping("")
