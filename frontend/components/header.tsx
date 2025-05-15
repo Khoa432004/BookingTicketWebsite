@@ -123,7 +123,7 @@ export function Header() {
             createdAt: string;
             read: boolean;
           }[]
-        >("http://localhost:8080/notifications", {
+        >("https://bookingticketwebsite.onrender.com/api/notifications", {
           withCredentials: true,
         });
 
