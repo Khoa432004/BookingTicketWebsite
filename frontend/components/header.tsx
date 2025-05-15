@@ -132,9 +132,9 @@ export function Header() {
           throw new Error("Dữ liệu trả về từ API không phải là mảng");
         }
 
-        // Lọc chỉ lấy thông báo có target là "customer"
+        // Lọc chỉ lấy thông báo có target là "customer" && all
         const customerNotifications = response.data.filter(
-          (item) => item.target.toLowerCase() === "customer"
+          (item) => item.target.toLowerCase() === "customer" || item.target.toLowerCase() === "all"
         );
 
         // Ánh xạ dữ liệu từ API sang định dạng notifications của Header
