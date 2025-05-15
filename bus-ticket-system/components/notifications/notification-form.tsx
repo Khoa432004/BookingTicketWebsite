@@ -39,8 +39,8 @@ export function NotificationForm({ onSubmit, notification = null }: Notification
     try {
       const isEditMode = notification !== null;
       const url = isEditMode
-        ? `https://bookingticketwebsite.onrender.com/api/notifications/${notification.id}` // Gọi trực tiếp backend
-        : `https://bookingticketwebsite.onrender.com/api/notifications`; // Gọi trực tiếp backend
+        ? `https://bookingticketwebsite.onrender.com/api/notifications/${notification.id}`
+        : 'https://bookingticketwebsite.onrender.com/api/notifications';
       const method = isEditMode ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
