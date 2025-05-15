@@ -41,7 +41,7 @@ public class NotificationController {
         }
     }
 
-    // Tạo thông báo mới (không cần session, nhưng có thể thêm kiểm tra quyền sau)
+    // Tạo thông báo mới 
     @PostMapping("")
     public ResponseEntity<Map<String, Object>> createNotification(@RequestBody Map<String, Object> request) {
         try {
@@ -49,7 +49,7 @@ public class NotificationController {
                 (String) request.get("title"),
                 (String) request.get("content"),
                 (String) request.get("target"),
-                1L // Loại bỏ userId, hoặc giữ null nếu không cần
+                2L 
             );
             return ResponseEntity.ok(notification);
         } catch (IllegalArgumentException e) {
