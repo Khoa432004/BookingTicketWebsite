@@ -108,7 +108,7 @@ export default function BookingPage({ params }: PageProps) {
         }
 
         // Fetch seats for this specific trip/bus
-        const seatsResponse = await fetch(`${backendUrl}/seats/trip/${busId}`);
+        const seatsResponse = await fetch(`${backendUrl}/seats/trip/${tripData.id}`);
         if (!seatsResponse.ok) {
           throw new Error('Không thể tải thông tin ghế');
         }
