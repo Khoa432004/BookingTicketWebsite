@@ -53,12 +53,10 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
         const response = await axios.get<ApiNotification[]>("https://bookingticketwebsite.onrender.com/api/notifications", {
           withCredentials: true,
         });
-
         // Kiểm tra dữ liệu trả về
         if (!Array.isArray(response.data)) {
           throw new Error("Dữ liệu trả về từ API không phải là mảng");
         }
-
         // Chuyển đổi dữ liệu từ API thành định dạng Notification
         const fetchedNotifications: Notification[] = response.data.map((item: ApiNotification) => {
           const createdAtDate = new Date(item.createdAt);
