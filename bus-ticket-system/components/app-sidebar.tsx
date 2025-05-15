@@ -48,6 +48,10 @@ export function AppSidebar() {
     },
   ]
 
+  const handleLogout = () => {
+    window.location.href = "https://booking-ticket-website-silk.vercel.app/dang-nhap"
+  }
+
   return (
     <Sidebar>
       <SidebarHeader className="flex flex-col items-center justify-center p-4">
@@ -84,7 +88,7 @@ export function AppSidebar() {
               <p className="text-xs text-muted-foreground">admin@example.com</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={handleLogout}>
             <LogOut className="h-4 w-4" />
             <span className="sr-only">Đăng xuất</span>
           </Button>
