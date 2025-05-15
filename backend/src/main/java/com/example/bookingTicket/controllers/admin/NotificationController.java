@@ -49,7 +49,7 @@ public class NotificationController {
                 (String) request.get("title"),
                 (String) request.get("content"),
                 (String) request.get("target"),
-                null // Loại bỏ userId, hoặc giữ null nếu không cần
+                1L // Loại bỏ userId, hoặc giữ null nếu không cần
             );
             return ResponseEntity.ok(notification);
         } catch (IllegalArgumentException e) {
