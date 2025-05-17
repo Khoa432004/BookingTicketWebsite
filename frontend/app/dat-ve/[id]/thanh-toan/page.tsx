@@ -148,8 +148,41 @@ export default function PaymentPage({ params }: PaymentProps) {
 
       // Handle different payment methods
       if (selectedMethod === 'TRANSFER') {
-        console.log('Redirecting to VNPay...')
-        router.push(`/dat-ve/${params.id}/thanh-toan/vnpay`)
+        console.log('Preparing VNPay payment...')
+        
+        try {
+          // Call prepare payment API to get VNPay URL
+          const preparePaymentRequest = {
+            bookingId: bookingData.ticket.id,
+            amount: pendingBooking.amount,
+            method: selectedMethod
+          }
+          
+          const prepareResponse = await fetch('/api/payments/prepare', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(preparePaymentRequest),
+          })
+          
+          const prepareData = await prepareResponse.json()
+          
+          if (prepareResponse.ok && prepareData.data) {
+            // Redirect to VNPay website
+            console.log('Redirecting to VNPay payment page:', prepareData.data)
+            window.location.href = prepareData.data
+          } else {
+            // If VNPay integration fails, just complete the booking
+            console.log('VNPay preparation failed, completing booking without online payment')
+            alert('Đặt vé thành công! Vui lòng thanh toán tại quầy.')
+            router.push('/lich-su-dat-ve')
+          }
+        } catch (error) {
+          console.error('VNPay preparation error:', error)
+          alert('Đặt vé thành công! Tuy nhiên cổng thanh toán đang gặp sự cố. Vui lòng thanh toán tại quầy.')
+          router.push('/lich-su-dat-ve')
+        }
       } else {
         console.log('COD payment completed')
         alert('Đặt vé thành công! Vui lòng đến quầy để thanh toán và nhận vé.')

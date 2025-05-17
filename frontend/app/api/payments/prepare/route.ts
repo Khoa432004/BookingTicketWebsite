@@ -23,6 +23,18 @@ export async function POST(request: Request) {
       )
     }
 
+    // Create a mock VNPay URL for testing
+    // In production, this would come from your backend after calling VNPay API
+    const mockVnpayUrl = `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?amount=${body.amount * 100}&bookingId=${body.bookingId}&vnp_TxnRef=${Date.now()}`
+    
+    console.log('Generated mock VNPay URL:', mockVnpayUrl)
+    
+    return NextResponse.json({ 
+      success: true,
+      data: mockVnpayUrl
+    })
+
+    /* Commenting out actual backend call for now
     // Call backend API to prepare payment
     const backendResponse = await fetch(`${process.env.BACKEND_API_URL}/api/payments/prepare`, {
       method: 'POST',
@@ -43,6 +55,7 @@ export async function POST(request: Request) {
 
     // Return the payment URL
     return NextResponse.json({ data: responseData.data.data })
+    */
   } catch (error) {
     console.error('Payment preparation error:', error)
     return NextResponse.json(
