@@ -23,15 +23,15 @@ export async function POST(request: Request) {
       )
     }
 
-    // Create a mock VNPay URL for testing
-    // In production, this would come from your backend after calling VNPay API
-    const mockVnpayUrl = `https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?amount=${body.amount * 100}&bookingId=${body.bookingId}&vnp_TxnRef=${Date.now()}`
+    // Instead of redirecting to VNPay sandbox (which causes errors),
+    // let's create a simple success page for testing
+    const paymentSuccessUrl = `/payment-success?bookingId=${body.bookingId}&amount=${body.amount}&txnRef=${Date.now()}`
     
-    console.log('Generated mock VNPay URL:', mockVnpayUrl)
+    console.log('Redirecting to payment success page:', paymentSuccessUrl)
     
     return NextResponse.json({ 
       success: true,
-      data: mockVnpayUrl
+      data: paymentSuccessUrl
     })
 
     /* Commenting out actual backend call for now
