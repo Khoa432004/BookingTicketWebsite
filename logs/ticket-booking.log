@@ -8,3 +8,291 @@
 2025-05-17 08:03:38 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
 2025-05-17 08:03:38 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
 2025-05-17 08:03:38 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-05-17 08:03:39 [restartedMain] INFO  o.apache.jasper.servlet.TldScanner - At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-05-17 08:03:39 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-17 08:03:39 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2129 ms
+2025-05-17 08:03:39 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-17 08:03:39 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-05-17 08:03:39 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-17 08:03:39 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-05-17 08:03:39 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-17 08:03:40 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@765fbda6
+2025-05-17 08:03:40 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-17 08:03:40 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-17 08:03:40 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 9.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-17 08:03:41 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-17 08:03:44 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-05-17 08:03:44 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-05-17 08:03:45 [restartedMain] WARN  o.s.b.a.t.ThymeleafAutoConfiguration$DefaultTemplateResolverConfiguration - Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2025-05-17 08:03:46 [restartedMain] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:mysql://hopper.proxy.rlwy.net:59509/railway?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true'
+2025-05-17 08:03:46 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-05-17 08:03:46 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-05-17 08:03:46 [restartedMain] INFO  c.e.bookingTicket.DemoApplication - Started DemoApplication in 9.799 seconds (process running for 10.146)
+2025-05-17 08:04:04 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-17 08:04:04 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-05-17 08:04:04 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-05-17 08:04:04 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        a1_0.user_id,
+        a1_0.password,
+        a1_0.type,
+        a1_0.user_name 
+    from
+        accounts a1_0 
+    where
+        a1_0.user_name=?
+2025-05-17 08:04:08 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.arrival_time,
+        t1_0.available_seats,
+        t1_0.bus_id,
+        t1_0.bus_type,
+        t1_0.departure_time,
+        t1_0.destination,
+        t1_0.origin,
+        t1_0.price,
+        t1_0.trip_id 
+    from
+        trip t1_0
+2025-05-17 08:04:08 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        b1_0.id,
+        b1_0.bus_number,
+        b1_0.bus_type,
+        o1_0.id,
+        o1_0.email,
+        o1_0.gender,
+        o1_0.name,
+        o1_0.phone,
+        o1_0.status,
+        sn1_0.id,
+        sn1_0.dtype,
+        sn1_0.content,
+        sn1_0.notification_date,
+        sn1_0.notifi_id,
+        sn1_0.receiving,
+        sn1_0.title,
+        sn1_0.type,
+        sn1_0.sender_id,
+        a1_0.user_id,
+        a1_0.password,
+        a1_0.type,
+        a1_0.user_name,
+        b1_0.total_seats,
+        t1_0.id,
+        t1_0.arrival_time,
+        t1_0.available_seats,
+        t1_0.bus_type,
+        t1_0.departure_time,
+        t1_0.destination,
+        t1_0.origin,
+        t1_0.price,
+        t1_0.trip_id 
+    from
+        bus b1_0 
+    left join
+        (select
+            * 
+        from
+            users t 
+        where
+            t.user_type='Owner') o1_0 
+            on o1_0.id=b1_0.owner_id 
+    left join
+        notifications sn1_0 
+            on sn1_0.id=o1_0.notification_id 
+    left join
+        accounts a1_0 
+            on a1_0.user_id=o1_0.account_id 
+    left join
+        trip t1_0 
+            on b1_0.id=t1_0.bus_id 
+    where
+        b1_0.id=?
+2025-05-17 08:04:09 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        b1_0.id,
+        b1_0.bus_number,
+        b1_0.bus_type,
+        o1_0.id,
+        o1_0.email,
+        o1_0.gender,
+        o1_0.name,
+        o1_0.phone,
+        o1_0.status,
+        sn1_0.id,
+        sn1_0.dtype,
+        sn1_0.content,
+        sn1_0.notification_date,
+        sn1_0.notifi_id,
+        sn1_0.receiving,
+        sn1_0.title,
+        sn1_0.type,
+        sn1_0.sender_id,
+        a1_0.user_id,
+        a1_0.password,
+        a1_0.type,
+        a1_0.user_name,
+        b1_0.total_seats,
+        t1_0.id,
+        t1_0.arrival_time,
+        t1_0.available_seats,
+        t1_0.bus_type,
+        t1_0.departure_time,
+        t1_0.destination,
+        t1_0.origin,
+        t1_0.price,
+        t1_0.trip_id 
+    from
+        bus b1_0 
+    left join
+        (select
+            * 
+        from
+            users t 
+        where
+            t.user_type='Owner') o1_0 
+            on o1_0.id=b1_0.owner_id 
+    left join
+        notifications sn1_0 
+            on sn1_0.id=o1_0.notification_id 
+    left join
+        accounts a1_0 
+            on a1_0.user_id=o1_0.account_id 
+    left join
+        trip t1_0 
+            on b1_0.id=t1_0.bus_id 
+    where
+        b1_0.id=?
+2025-05-17 08:04:09 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.arrival_time,
+        t1_0.available_seats,
+        t1_0.bus_id,
+        t1_0.bus_type,
+        t1_0.departure_time,
+        t1_0.destination,
+        t1_0.origin,
+        t1_0.price,
+        t1_0.trip_id 
+    from
+        trip t1_0
+2025-05-17 08:04:09 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        b1_0.id,
+        b1_0.bus_number,
+        b1_0.bus_type,
+        o1_0.id,
+        o1_0.email,
+        o1_0.gender,
+        o1_0.name,
+        o1_0.phone,
+        o1_0.status,
+        sn1_0.id,
+        sn1_0.dtype,
+        sn1_0.content,
+        sn1_0.notification_date,
+        sn1_0.notifi_id,
+        sn1_0.receiving,
+        sn1_0.title,
+        sn1_0.type,
+        sn1_0.sender_id,
+        a1_0.user_id,
+        a1_0.password,
+        a1_0.type,
+        a1_0.user_name,
+        b1_0.total_seats,
+        t1_0.id,
+        t1_0.arrival_time,
+        t1_0.available_seats,
+        t1_0.bus_type,
+        t1_0.departure_time,
+        t1_0.destination,
+        t1_0.origin,
+        t1_0.price,
+        t1_0.trip_id 
+    from
+        bus b1_0 
+    left join
+        (select
+            * 
+        from
+            users t 
+        where
+            t.user_type='Owner') o1_0 
+            on o1_0.id=b1_0.owner_id 
+    left join
+        notifications sn1_0 
+            on sn1_0.id=o1_0.notification_id 
+    left join
+        accounts a1_0 
+            on a1_0.user_id=o1_0.account_id 
+    left join
+        trip t1_0 
+            on b1_0.id=t1_0.bus_id 
+    where
+        b1_0.id=?
+2025-05-17 08:04:09 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        b1_0.id,
+        b1_0.bus_number,
+        b1_0.bus_type,
+        o1_0.id,
+        o1_0.email,
+        o1_0.gender,
+        o1_0.name,
+        o1_0.phone,
+        o1_0.status,
+        sn1_0.id,
+        sn1_0.dtype,
+        sn1_0.content,
+        sn1_0.notification_date,
+        sn1_0.notifi_id,
+        sn1_0.receiving,
+        sn1_0.title,
+        sn1_0.type,
+        sn1_0.sender_id,
+        a1_0.user_id,
+        a1_0.password,
+        a1_0.type,
+        a1_0.user_name,
+        b1_0.total_seats,
+        t1_0.id,
+        t1_0.arrival_time,
+        t1_0.available_seats,
+        t1_0.bus_type,
+        t1_0.departure_time,
+        t1_0.destination,
+        t1_0.origin,
+        t1_0.price,
+        t1_0.trip_id 
+    from
+        bus b1_0 
+    left join
+        (select
+            * 
+        from
+            users t 
+        where
+            t.user_type='Owner') o1_0 
+            on o1_0.id=b1_0.owner_id 
+    left join
+        notifications sn1_0 
+            on sn1_0.id=o1_0.notification_id 
+    left join
+        accounts a1_0 
+            on a1_0.user_id=o1_0.account_id 
+    left join
+        trip t1_0 
+            on b1_0.id=t1_0.bus_id 
+    where
+        b1_0.id=?
