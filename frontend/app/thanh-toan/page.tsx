@@ -10,7 +10,14 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { BookTicketRequest } from "@/app/api/tickets/book/route";
-import type { PreparePaymentRequest, PaymentMethod } from "@/app/api/payments/prepare/route";
+
+export interface PreparePaymentRequest {
+  bookingId: number;
+  amount: number;
+  method: PaymentMethod;
+}
+
+export type PaymentMethod = "TRANSFER" | "BY_CASH";
 
 interface PaymentInfo {
   seatId: number;
@@ -110,6 +117,36 @@ export default function PaymentPage() {
         throw new Error(bookingData.error || 'Không thể đặt vé');
       }
 
+      // If payment method is TRANSFER, redirect to VNPay
+      if (selectedMethod === 'TRANSFER') {
+        const paymentRequest: PreparePaymentRequest = {
+          bookingId: bookingData.ticket.id,
+          amount: bookingInfo.amount,
+          method: selectedMethod
+        };
+
+        const paymentResponse = await fetch('/api/payments/prepare', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(paymentRequest)
+        });
+
+        const paymentData = await paymentResponse.json();
+        if (!paymentResponse.ok) {
+          throw new Error(paymentData.error || 'Không thể tạo URL thanh toán');
+        }
+
+        // Store booking reference for after payment return
+        sessionStorage.setItem('pendingPaymentBookingId', bookingData.ticket.id.toString());
+        
+        // Redirect to VNPay payment page
+        window.location.href = paymentData.data;
+        return;
+      }
+
+      // If COD or other payment method
       // Clear booking info from session storage
       sessionStorage.removeItem('pendingBooking');
 
@@ -215,6 +252,7 @@ export default function PaymentPage() {
                       <p><strong>Chủ tài khoản:</strong> FUTA Bus Lines</p>
                       <p><strong>Nội dung:</strong> {paymentInfo.seatNumber} {paymentInfo.passengerName}</p>
                     </div>
+                    <p className="mt-4 text-sm text-blue-600">Bạn sẽ được chuyển đến cổng thanh toán VNPay để hoàn tất giao dịch</p>
                   </div>
                 )}
               </Card>

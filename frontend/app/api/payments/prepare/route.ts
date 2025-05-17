@@ -1,59 +1,52 @@
 import { NextResponse } from "next/server"
 
-export type PaymentMethod = "BY_CASH" | "TRANSFER"
+export type PaymentMethod = "TRANSFER" | "BY_CASH"
 
 export interface PreparePaymentRequest {
   bookingId: number
   amount: number
-  paymentMethod: PaymentMethod
+  method: PaymentMethod
 }
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8080'
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const body: PreparePaymentRequest = await request.json()
     console.log('Payment preparation request:', body)
 
     // Validate required fields
-    if (!body.bookingId || !body.amount || !body.paymentMethod) {
+    if (!body.bookingId || !body.amount || !body.method) {
       return NextResponse.json(
-        { error: 'Thiếu thông tin thanh toán' },
+        { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // Create payment record with appropriate status
-    const paymentResponse = await fetch(`${backendUrl}/api/payments/create`, {
+    // Call backend API to prepare payment
+    const backendResponse = await fetch(`${process.env.BACKEND_API_URL}/api/payments/prepare`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        bookingId: body.bookingId,
-        amount: body.amount,
-        method: body.paymentMethod,
-        status: body.paymentMethod === 'BY_CASH' ? 'WAITING_CASH' : 'WAITING_TRANSFER'
-      })
+      body: JSON.stringify(body),
     })
 
-    if (!paymentResponse.ok) {
-      const errorData = await paymentResponse.json()
-      console.error('Payment creation failed:', errorData)
+    const responseData = await backendResponse.json()
+
+    if (!backendResponse.ok) {
       return NextResponse.json(
-        { error: errorData.error || 'Không thể tạo thanh toán' },
-        { status: paymentResponse.status }
+        { error: responseData.message || 'Error preparing payment' },
+        { status: backendResponse.status }
       )
     }
 
-    const paymentData = await paymentResponse.json()
-    console.log('Payment created:', paymentData)
-
-    return NextResponse.json({ data: paymentData })
+    // Return the payment URL
+    return NextResponse.json({ data: responseData.data.data })
   } catch (error) {
-    console.error('Error in payment preparation:', error)
+    console.error('Payment preparation error:', error)
     return NextResponse.json(
-      { error: 'Có lỗi xảy ra khi chuẩn bị thanh toán' },
+      { error: 'Failed to prepare payment' },
       { status: 500 }
     )
   }

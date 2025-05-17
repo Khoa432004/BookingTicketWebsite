@@ -1,8 +1,11 @@
 package com.example.bookingTicket.controllers;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +70,34 @@ public class PaymentController {
     
     @Autowired
     private TripService tripService;
+
+    @PostMapping("/prepare")
+    public ResponseEntity<?> preparePayment(@RequestBody PaymentRequest request) throws Exception {
+        Map<String, String> vnp_Params = new HashMap<>();
+        vnp_Params.put("vnp_Version", "2.1.0");
+        vnp_Params.put("vnp_Command", "pay");
+        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.put("vnp_Amount", String.valueOf(request.getAmount() * 100));
+        vnp_Params.put("vnp_CurrCode", "VND");
+        vnp_Params.put("vnp_TxnRef", String.valueOf(System.currentTimeMillis()));
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + request.getBookingId());
+        vnp_Params.put("vnp_OrderType", "250000");
+        vnp_Params.put("vnp_Locale", "vn");
+        vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl);
+        vnp_Params.put("vnp_IpAddr", "127.0.0.1");
+        vnp_Params.put("vnp_CreateDate", String.valueOf(System.currentTimeMillis()));
+
+        String hashData = String.join("&", vnp_Params.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+                .toArray(String[]::new));
+
+        String vnp_SecureHash = hmacSHA512(vnp_HashSecret, hashData);
+        vnp_Params.put("vnp_SecureHash", vnp_SecureHash);
+
+        String paymentUrl = vnp_PayUrl + "?" + hashData + "&vnp_SecureHash=" + vnp_SecureHash;
+        return ResponseEntity.ok(new SuccessResponse("Success", Map.of("data", paymentUrl)));
+    }
 
     @PostMapping
     public ResponseEntity<?> createPayment(@RequestBody PaymentRequest request) {
@@ -133,12 +164,12 @@ public class PaymentController {
         if (signValue.equals(vnp_SecureHash)) {
             String vnp_ResponseCode = queryParams.get("vnp_ResponseCode");
             if ("00".equals(vnp_ResponseCode)) {
-                return ResponseEntity.ok("Payment Success");
+                return ResponseEntity.ok(new SuccessResponse("Success", "Thanh toán thành công"));
             } else {
-                return ResponseEntity.ok("Payment Failed");
+                return ResponseEntity.badRequest().body(new ErrorResponse("Error", "Thanh toán thất bại"));
             }
         } else {
-            return ResponseEntity.badRequest().body("Invalid signature");
+            return ResponseEntity.badRequest().body(new ErrorResponse("Error", "Invalid signature"));
         }
     }
 
