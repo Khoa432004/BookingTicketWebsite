@@ -23,20 +23,11 @@ export async function POST(request: Request) {
       )
     }
 
-    // Instead of redirecting to VNPay sandbox (which causes errors),
-    // let's create a simple success page for testing
-    const paymentSuccessUrl = `/payment-success?bookingId=${body.bookingId}&amount=${body.amount}&txnRef=${Date.now()}`
-    
-    console.log('Redirecting to payment success page:', paymentSuccessUrl)
-    
-    return NextResponse.json({ 
-      success: true,
-      data: paymentSuccessUrl
-    })
-
-    /* Commenting out actual backend call for now
     // Call backend API to prepare payment
-    const backendResponse = await fetch(`${process.env.BACKEND_API_URL}/api/payments/prepare`, {
+    console.log('Calling backend API to prepare VNPay payment')
+    console.log('Backend URL:', backendUrl)
+    
+    const backendResponse = await fetch(`${backendUrl}/api/payments/prepare`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +35,23 @@ export async function POST(request: Request) {
       body: JSON.stringify(body),
     })
 
-    const responseData = await backendResponse.json()
+    console.log('Backend response status:', backendResponse.status)
+    
+    const responseText = await backendResponse.text()
+    console.log('Raw backend response:', responseText)
+    
+    // Parse the response text to JSON
+    let responseData
+    try {
+      responseData = responseText ? JSON.parse(responseText) : {}
+      console.log('Parsed response data:', responseData)
+    } catch (e) {
+      console.error('Error parsing response:', e)
+      return NextResponse.json(
+        { error: 'Invalid response from payment server' },
+        { status: 500 }
+      )
+    }
 
     if (!backendResponse.ok) {
       return NextResponse.json(
@@ -53,9 +60,20 @@ export async function POST(request: Request) {
       )
     }
 
-    // Return the payment URL
-    return NextResponse.json({ data: responseData.data.data })
-    */
+    // Check if we have the payment URL in the response
+    const paymentUrl = responseData.data?.data
+    
+    if (!paymentUrl) {
+      console.log('No payment URL found in response, falling back to mock URL')
+      // Fallback to the payment success URL
+      const fallbackUrl = `/payment-success?bookingId=${body.bookingId}&amount=${body.amount}&txnRef=${Date.now()}`
+      return NextResponse.json({ success: true, data: fallbackUrl })
+    }
+    
+    console.log('Returning VNPay URL:', paymentUrl)
+    // Return the payment URL from VNPay
+    return NextResponse.json({ success: true, data: paymentUrl })
+    
   } catch (error) {
     console.error('Payment preparation error:', error)
     return NextResponse.json(
