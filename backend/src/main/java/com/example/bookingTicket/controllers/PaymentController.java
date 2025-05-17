@@ -73,29 +73,42 @@ public class PaymentController {
 
     @PostMapping("/prepare")
     public ResponseEntity<?> preparePayment(@RequestBody PaymentRequest request) throws Exception {
+        // Tạo các tham số gửi đến VNPay
         Map<String, String> vnp_Params = new HashMap<>();
+        
+        // Format thời gian theo định dạng yyyyMMddHHmmss
+        String createDate = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String txnRef = createDate + "_" + request.getBookingId();
+        
+        // Đảm bảo số tiền là số nguyên
+        long amountInVND = (long)(request.getAmount() * 100); // VNPay yêu cầu số tiền * 100 và là số nguyên
+        
         vnp_Params.put("vnp_Version", "2.1.0");
         vnp_Params.put("vnp_Command", "pay");
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(request.getAmount() * 100));
+        vnp_Params.put("vnp_Amount", String.valueOf(amountInVND));
         vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_TxnRef", String.valueOf(System.currentTimeMillis()));
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + request.getBookingId());
-        vnp_Params.put("vnp_OrderType", "250000");
+        vnp_Params.put("vnp_TxnRef", txnRef);
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan ve xe " + request.getBookingId());
+        vnp_Params.put("vnp_OrderType", "190000"); // Mã danh mục hàng hóa - Vé xe
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", "127.0.0.1");
-        vnp_Params.put("vnp_CreateDate", String.valueOf(System.currentTimeMillis()));
-
-        String hashData = String.join("&", vnp_Params.entrySet().stream()
+        vnp_Params.put("vnp_CreateDate", createDate);
+        
+        // Sắp xếp các tham số theo key để tạo chuỗi hash
+        String hashData = vnp_Params.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
-                .toArray(String[]::new));
+                .collect(java.util.stream.Collectors.joining("&"));
 
         String vnp_SecureHash = hmacSHA512(vnp_HashSecret, hashData);
-        vnp_Params.put("vnp_SecureHash", vnp_SecureHash);
-
+        
+        // Tạo URL đầy đủ
         String paymentUrl = vnp_PayUrl + "?" + hashData + "&vnp_SecureHash=" + vnp_SecureHash;
+        
+        System.out.println("VNPay URL: " + paymentUrl);
+        
         return ResponseEntity.ok(new SuccessResponse("Success", Map.of("data", paymentUrl)));
     }
 

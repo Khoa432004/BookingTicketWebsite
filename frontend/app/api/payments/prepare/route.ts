@@ -23,16 +23,28 @@ export async function POST(request: Request) {
       )
     }
 
+    // Đảm bảo số tiền là số nguyên
+    const amount = Math.round(body.amount)
+    
     // Call backend API to prepare payment
     console.log('Calling backend API to prepare VNPay payment')
     console.log('Backend URL:', backendUrl)
+    console.log('Payment data being sent:', {
+      bookingId: body.bookingId,
+      amount: amount,
+      method: body.method
+    })
     
     const backendResponse = await fetch(`${backendUrl}/api/payments/prepare`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        bookingId: body.bookingId,
+        amount: amount,
+        method: body.method
+      }),
     })
 
     console.log('Backend response status:', backendResponse.status)
@@ -66,7 +78,7 @@ export async function POST(request: Request) {
     if (!paymentUrl) {
       console.log('No payment URL found in response, falling back to mock URL')
       // Fallback to the payment success URL
-      const fallbackUrl = `/payment-success?bookingId=${body.bookingId}&amount=${body.amount}&txnRef=${Date.now()}`
+      const fallbackUrl = `/payment-success?bookingId=${body.bookingId}&amount=${amount}&txnRef=${Date.now()}`
       return NextResponse.json({ success: true, data: fallbackUrl })
     }
     
