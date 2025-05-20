@@ -24,14 +24,29 @@ function PaymentResult() {
           params.append(key, value);
         });
 
+        console.log('Verifying payment with params:', params.toString());
+
         // Verify payment with backend
         const response = await fetch(`/api/payments/verify?${params.toString()}`, {
           method: 'GET',
         });
 
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Verification error response:', errorText);
+          setSuccess(false);
+          try {
+            const errorData = JSON.parse(errorText);
+            setError(errorData.error || 'Thanh toán thất bại');
+          } catch (e) {
+            setError('Thanh toán thất bại');
+          }
+          return;
+        }
+
         const result = await response.json();
 
-        if (response.ok) {
+        if (result.success) {
           setSuccess(true);
           
           // Get booking ID from session storage

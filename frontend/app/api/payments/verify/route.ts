@@ -11,9 +11,13 @@ export async function GET(request: Request) {
       .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
       .join('&');
 
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://localhost:8080';
+    console.log('Backend URL:', backendUrl);
+    console.log('Query string:', queryString);
+
     // Call backend API to verify payment
     const backendResponse = await fetch(
-      `${process.env.BACKEND_API_URL}/api/payments/vnpay-return?${queryString}`,
+      `${backendUrl}/api/payments/vnpay-return?${queryString}`,
       {
         method: 'GET',
         headers: {
@@ -22,18 +26,27 @@ export async function GET(request: Request) {
       }
     );
 
-    const responseData = await backendResponse.json();
-
     if (!backendResponse.ok) {
+      const errorText = await backendResponse.text();
+      console.error('Backend error response:', errorText);
+      
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch (e) {
+        errorData = { message: 'Thanh toán thất bại' };
+      }
+      
       return NextResponse.json(
         { 
           success: false,
-          error: responseData.message || 'Thanh toán thất bại' 
+          error: errorData.message || 'Thanh toán thất bại' 
         },
         { status: backendResponse.status }
       );
     }
 
+    const responseData = await backendResponse.json();
     return NextResponse.json({
       success: true,
       message: responseData.message || 'Thanh toán thành công',
