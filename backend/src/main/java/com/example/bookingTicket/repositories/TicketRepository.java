@@ -89,4 +89,87 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             """, nativeQuery = true)
     Optional<TicketInfoProjection> getTicketDetailByBookingCode(@Param("code") String code);
 
+    @Query(value = """
+        SELECT
+            t.booking_code AS bookingCode,
+            u.name AS customerName,
+            u.phone AS phone,
+            CONCAT(tr.origin, ' - ', tr.destination) AS route,
+            tr.arrival_time AS arrivalTime,
+            s.seat_number AS seatNumber,
+            t.status AS ticketStatus,
+            p.status AS paymentStatus
+        FROM ticket t
+        JOIN seat s ON s.id = t.seat_id
+        JOIN trip tr ON tr.id = t.trip_id
+        JOIN users u ON u.id = t.customer_id
+        JOIN booking_histories h ON h.seat_id = s.id AND h.trip_id = tr.id
+        JOIN payments p ON p.booking_history_id = h.id
+        WHERE t.booking_code LIKE CONCAT('%', :keyword, '%')
+        AND t.status NOT IN ('CANCELED')
+    """, nativeQuery = true)
+    List<TicketInfoProjection> findByBookingCodeContaining(@Param("keyword") String keyword);
+
+    @Query(value = """
+        SELECT
+            t.booking_code AS bookingCode,
+            u.name AS customerName,
+            u.phone AS phone,
+            CONCAT(tr.origin, ' - ', tr.destination) AS route,
+            tr.arrival_time AS arrivalTime,
+            s.seat_number AS seatNumber,
+            t.status AS ticketStatus,
+            p.status AS paymentStatus
+        FROM ticket t
+        JOIN seat s ON s.id = t.seat_id
+        JOIN trip tr ON tr.id = t.trip_id
+        JOIN users u ON u.id = t.customer_id
+        JOIN booking_histories h ON h.seat_id = s.id AND h.trip_id = tr.id
+        JOIN payments p ON p.booking_history_id = h.id
+        WHERE u.name LIKE CONCAT('%', :keyword, '%')
+        AND t.status NOT IN ('CANCELED')
+    """, nativeQuery = true)
+    List<TicketInfoProjection> findByCustomerNameContaining(@Param("keyword") String keyword);
+
+    @Query(value = """
+        SELECT
+            t.booking_code AS bookingCode,
+            u.name AS customerName,
+            u.phone AS phone,
+            CONCAT(tr.origin, ' - ', tr.destination) AS route,
+            tr.arrival_time AS arrivalTime,
+            s.seat_number AS seatNumber,
+            t.status AS ticketStatus,
+            p.status AS paymentStatus
+        FROM ticket t
+        JOIN seat s ON s.id = t.seat_id
+        JOIN trip tr ON tr.id = t.trip_id
+        JOIN users u ON u.id = t.customer_id
+        JOIN booking_histories h ON h.seat_id = s.id AND h.trip_id = tr.id
+        JOIN payments p ON p.booking_history_id = h.id
+        WHERE u.phone LIKE CONCAT('%', :keyword, '%')
+        AND t.status NOT IN ('CANCELED')
+    """, nativeQuery = true)
+    List<TicketInfoProjection> findByPhoneContaining(@Param("keyword") String keyword);
+
+    @Query(value = """
+        SELECT
+            t.booking_code AS bookingCode,
+            u.name AS customerName,
+            u.phone AS phone,
+            CONCAT(tr.origin, ' - ', tr.destination) AS route,
+            tr.arrival_time AS arrivalTime,
+            s.seat_number AS seatNumber,
+            t.status AS ticketStatus,
+            p.status AS paymentStatus
+        FROM ticket t
+        JOIN seat s ON s.id = t.seat_id
+        JOIN trip tr ON tr.id = t.trip_id
+        JOIN users u ON u.id = t.customer_id
+        JOIN booking_histories h ON h.seat_id = s.id AND h.trip_id = tr.id
+        JOIN payments p ON p.booking_history_id = h.id
+        WHERE CONCAT(tr.origin, ' - ', tr.destination) LIKE CONCAT('%', :keyword, '%')
+        AND t.status NOT IN ('CANCELED')
+    """, nativeQuery = true)
+    List<TicketInfoProjection> findByRouteContaining(@Param("keyword") String keyword);
 }

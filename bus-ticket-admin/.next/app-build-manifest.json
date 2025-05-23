@@ -30,16 +30,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(dashboard)/tickets/page.js"
-    ],
-    "/(dashboard)/customers/loading": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/customers/loading.js"
-    ],
-    "/(dashboard)/customers/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/customers/page.js"
     ]
   }
 }

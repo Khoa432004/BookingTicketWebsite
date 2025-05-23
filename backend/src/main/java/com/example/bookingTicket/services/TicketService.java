@@ -19,6 +19,7 @@ import com.example.bookingTicket.models.Ticket;
 import com.example.bookingTicket.repositories.PaymentRepository;
 import com.example.bookingTicket.repositories.SeatRepository;
 import com.example.bookingTicket.repositories.TicketRepository;
+import com.example.bookingTicket.strategy.SearchStrategyFactory;
 
 @Service
 public class TicketService {
@@ -36,6 +37,9 @@ public class TicketService {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private SearchStrategyFactory searchStrategyFactory;
 
     // Lấy danh sách ghế khả dụng
     public List<Seat> getAvailableSeats() {
@@ -192,8 +196,8 @@ public class TicketService {
         return tickets;
     }
 
-    public List<TicketInfoProjection> searchTickets(String keyword) {
-        return ticketRepository.searchTickets(keyword);
+    public List<TicketInfoProjection> searchTickets(String keyword, String searchType) {
+        return searchStrategyFactory.getStrategy(searchType).search(keyword);
     }
 
     // Service

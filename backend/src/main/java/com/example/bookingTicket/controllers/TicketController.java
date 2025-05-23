@@ -88,8 +88,11 @@ public class TicketController {
 
     @GetMapping("/staff/tickets/search")
     @CrossOrigin(origins = {"http://localhost:3002", "https://booking-ticket-website-tyxb.vercel.app"})
-    public ResponseEntity<List<TicketInfoProjection>> searchTickets(@RequestParam String q) {
-        return ResponseEntity.ok(ticketService.searchTickets(q));
+    public ResponseEntity<List<TicketInfoProjection>> searchTickets(
+        @RequestParam String q,
+        @RequestParam(required = false, defaultValue = "bookingcode") String searchType
+    ) {
+        return ResponseEntity.ok(ticketService.searchTickets(q, searchType));
     }
 
     @GetMapping("/staff/tickets/{code}")

@@ -42,13 +42,14 @@ const ticketStatusMap: Record<string, { label: string; variant: BadgeVariant }> 
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [searchQuery, setSearchQuery] = useState("")
+  const [searchType, setSearchType] = useState("bookingcode")
   const [paymentFilter, setPaymentFilter] = useState("all")
   const [ticketFilter, setTicketFilter] = useState("all")
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
 
   useEffect(() => {
     const url = searchQuery.trim()
-      ? `${getBaseUrl()}/api/staff/tickets/search?q=${encodeURIComponent(searchQuery)}`
+      ? `${getBaseUrl()}/api/staff/tickets/search?q=${encodeURIComponent(searchQuery)}&searchType=${searchType}`
       : `${getBaseUrl()}/api/staff/tickets`
 
     setTickets([])
@@ -74,7 +75,7 @@ export default function TicketsPage() {
         setTickets(mapped)
       })
       .catch((err) => console.error("Error fetching tickets:", err))
-  }, [searchQuery])
+  }, [searchQuery, searchType])
 
   const filteredTickets = tickets.filter((ticket) => {
     if (paymentFilter !== "all" && ticket.paymentStatus !== paymentFilter) return false
@@ -112,11 +113,22 @@ export default function TicketsPage() {
             <div className="flex w-full items-center gap-2 md:w-auto">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Tìm theo mã vé hoặc tên khách hàng..."
+                placeholder="Tìm kiếm..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full md:w-[300px]"
               />
+              <Select value={searchType} onValueChange={setSearchType}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Chọn loại tìm kiếm" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bookingcode">Mã đặt vé</SelectItem>
+                  <SelectItem value="customername">Tên khách hàng</SelectItem>
+                  <SelectItem value="phone">Số điện thoại</SelectItem>
+                  <SelectItem value="route">Tuyến xe</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
