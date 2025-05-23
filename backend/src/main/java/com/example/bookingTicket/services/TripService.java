@@ -107,6 +107,11 @@ public class TripService {
         if (tripRepository.existsByTripId(trip.getTripId())) {
             throw new IllegalArgumentException("Mã chuyến xe " + trip.getTripId() + " đã tồn tại.");
         }
+        // Kiểm tra xe bus có chuyến khác không (loại trừ trường hợp tạo mới)
+        List<Trip> existingTrips = tripRepository.findByBusId(busId);
+        if (!existingTrips.isEmpty()) {
+            throw new IllegalArgumentException("Xe này đang có chuyến khác.");
+        }
 
         // Liên kết Trip với Bus
         trip.setBus(bus);

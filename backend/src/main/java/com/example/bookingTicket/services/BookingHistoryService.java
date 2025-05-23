@@ -30,4 +30,8 @@ public class BookingHistoryService {
     public List<BookingHistory> findByCustomerId(Long customerId) {
         return bookingHistoryRepository.findByCustomerId(customerId);
     }
+    
+    public void delete(Long id) {
+        bookingHistoryRepository.deleteById(id);
+    }
 } 

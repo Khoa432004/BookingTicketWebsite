@@ -3,7 +3,6 @@ package com.example.bookingTicket.controllers;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +15,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.bookingTicket.config.command.BookingCommandInvoker;
+import com.example.bookingTicket.config.command.CancelBookingCommand;
+import com.example.bookingTicket.config.command.CreateBookingCommand;
 import com.example.bookingTicket.dto.BookingHistoryDTO;
 import com.example.bookingTicket.dto.BookingRequest;
 import com.example.bookingTicket.dto.BookingResponse;
-import com.example.bookingTicket.enums.ESeatStatus;
-import com.example.bookingTicket.enums.ETicketStatus;
 import com.example.bookingTicket.models.BookingHistory;
 import com.example.bookingTicket.models.Customer;
-import com.example.bookingTicket.models.Seat;
 import com.example.bookingTicket.models.Ticket;
-import com.example.bookingTicket.models.Trip;
 import com.example.bookingTicket.responses.ErrorResponse;
 import com.example.bookingTicket.responses.SuccessResponse;
 import com.example.bookingTicket.services.BookingHistoryService;
@@ -54,6 +52,9 @@ public class BookingController {
 
     @Autowired
     private TicketService ticketService;
+    
+    @Autowired
+    private BookingCommandInvoker commandInvoker;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
@@ -156,60 +157,22 @@ public class BookingController {
                     .body(new ErrorResponse("Validation Error", "Thiếu thông tin ghế hoặc chuyến xe"));
             }
 
-            // Get seat and check availability
-            Seat seat = seatService.getSeatById(request.getSeatId());
-            if (seat == null) {
-                return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("Not Found", "Không tìm thấy ghế với ID: " + request.getSeatId()));
-            }
-
-            if (seat.getStatus() != ESeatStatus.AVAILABLE) {
-                return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("Invalid Status", "Ghế này đã được đặt. Vui lòng chọn ghế khác."));
-            }
-
-            // Get trip
-            Trip trip = tripService.getTripById(request.getTripId());
-            if (trip == null) {
-                return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("Not Found", "Không tìm thấy chuyến xe với ID: " + request.getTripId()));
-            }
-
-            // Get customer
-            Customer customer = customerService.findById(customerId);
-            if (customer == null) {
-                return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("Not Found", "Không tìm thấy thông tin khách hàng với ID: " + customerId));
-            }
+            // Create and execute booking command
+            CreateBookingCommand command = new CreateBookingCommand(
+                request,
+                customerId,
+                customerService,
+                seatService,
+                tripService,
+                ticketService,
+                bookingHistoryService
+            );
             
-            // Update seat status first
-            seat.setStatus(ESeatStatus.BOOKED);
-            seat = seatService.updateSeat(seat); // Save and get updated seat
+            commandInvoker.execute(command);
             
-            // Create ticket
-            Ticket ticket = new Ticket();
-            ticket.setBookingCode(UUID.randomUUID().toString());
-            ticket.setBookingDateTime(LocalDateTime.now());
-            ticket.setCost(trip.getPrice()); // Use trip price as cost
-            ticket.setSeat(seat);
-            ticket.setCustomer(customer);
-            ticket.setTrip(trip);
-            ticket.setStatus(ETicketStatus.WAITING);
-            Ticket savedTicket = ticketService.save(ticket);
-            
-            // Create booking history
-            BookingHistory bookingHistory = new BookingHistory();
-            bookingHistory.setCustomer(customer);
-            bookingHistory.setSeat(seat);
-            bookingHistory.setTrip(trip);
-            bookingHistory.setBookingTime(LocalDateTime.now());
-            bookingHistory.setPassengerName(request.getPassengerName());
-            bookingHistory.setPassengerPhone(request.getPassengerPhone());
-            bookingHistory.setPassengerEmail(request.getPassengerEmail());
-            bookingHistory.setStatus(ETicketStatus.WAITING); // Set initial status
-            
-            // Save booking history
-            BookingHistory savedBooking = bookingHistoryService.save(bookingHistory);
+            // Get results
+            BookingHistory savedBooking = command.getSavedBooking();
+            Ticket savedTicket = command.getSavedTicket();
             
             // Create response DTO
             BookingResponse response = new BookingResponse(
@@ -217,11 +180,11 @@ public class BookingController {
                 savedBooking.getPassengerName(),
                 savedBooking.getPassengerPhone(),
                 savedBooking.getPassengerEmail(),
-                seat.getSeatNumber(),
+                savedTicket.getSeat().getSeatNumber(),
                 String.format("%s - %s (%s)", 
-                    trip.getOrigin(), 
-                    trip.getDestination(),
-                    trip.getDepartureTime().format(formatter)),
+                    savedTicket.getTrip().getOrigin(), 
+                    savedTicket.getTrip().getDestination(),
+                    savedTicket.getTrip().getDepartureTime().format(formatter)),
                 savedBooking.getBookingTime().format(formatter)
             );
             
@@ -265,46 +228,16 @@ public class BookingController {
                 }
             }
             
-            // Find booking history
-            BookingHistory bookingHistory = bookingHistoryService.findById(id);
-            if (bookingHistory == null) {
-                System.err.println("Booking not found with ID: " + id);
-                return ResponseEntity.badRequest()
-                    .body(new ErrorResponse("Not Found", "Không tìm thấy đặt vé với ID: " + id));
-            }
+            // Create and execute cancel booking command
+            CancelBookingCommand command = new CancelBookingCommand(
+                id,
+                userId,
+                bookingHistoryService,
+                seatService,
+                ticketService
+            );
             
-            // Kiểm tra xem booking có thuộc về user không
-            if (userId != null && !bookingHistory.getCustomer().getId().equals(userId)) {
-                System.err.println("User " + userId + " attempted to cancel booking " + id + 
-                                   " owned by user " + bookingHistory.getCustomer().getId());
-                return ResponseEntity.status(403)
-                    .body(new ErrorResponse("Forbidden", "Bạn không có quyền hủy vé này"));
-            }
-            
-            // Update booking status to CANCELED
-            bookingHistory.setStatus(ETicketStatus.CANCELED);
-            bookingHistoryService.save(bookingHistory);
-            System.out.println("Booking history updated to CANCELED");
-            
-            // Update seat status to AVAILABLE
-            Seat seat = bookingHistory.getSeat();
-            if (seat != null) {
-                seat.setStatus(ESeatStatus.AVAILABLE);
-                seatService.updateSeat(seat);
-                System.out.println("Seat " + seat.getSeatNumber() + " updated to AVAILABLE");
-            } else {
-                System.err.println("No seat found for booking: " + id);
-            }
-            
-            // Find and update ticket status if exists
-            Ticket ticket = ticketService.findBySeat(seat);
-            if (ticket != null) {
-                ticket.setStatus(ETicketStatus.CANCELED);
-                ticketService.save(ticket);
-                System.out.println("Ticket updated to CANCELED");
-            } else {
-                System.err.println("No ticket found for booking: " + id);
-            }
+            commandInvoker.execute(command);
             
             System.out.println("Booking cancelled successfully");
             return ResponseEntity.ok(new SuccessResponse("Success", "Hủy đặt vé thành công"));

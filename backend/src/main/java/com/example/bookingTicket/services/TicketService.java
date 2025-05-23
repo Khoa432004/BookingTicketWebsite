@@ -82,6 +82,11 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    // Delete ticket
+    public void delete(Long id) {
+        ticketRepository.deleteById(id);
+    }
+
     // Chuẩn bị thông tin thanh toán
     public Payment preparePayment(Ticket ticket, EPaymentMethod paymentMethod) {
         // Create new booking history

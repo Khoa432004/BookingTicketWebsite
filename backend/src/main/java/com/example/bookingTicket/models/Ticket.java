@@ -2,6 +2,8 @@ package com.example.bookingTicket.models;
 
 import java.time.LocalDateTime;
 
+import com.example.bookingTicket.config.state.TicketState;
+import com.example.bookingTicket.config.state.TicketStateFactory;
 import com.example.bookingTicket.enums.ETicketStatus;
 
 import jakarta.persistence.Column;
@@ -14,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "ticket")
@@ -34,6 +37,9 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ETicketStatus status;
+    
+    @Transient
+    private TicketState state;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -55,6 +61,28 @@ public class Ticket {
     @JoinColumn(name = "support_request_id")
     private SupportRequest supportRequest;
 
+    // State pattern methods
+    public void handlePayment() {
+        ensureStateInitialized();
+        state.handlePayment(this);
+    }
+    
+    public void handleCancel() {
+        ensureStateInitialized();
+        state.handleCancel(this);
+    }
+    
+    public void handleConfirm() {
+        ensureStateInitialized();
+        state.handleConfirm(this);
+    }
+    
+    private void ensureStateInitialized() {
+        if (state == null) {
+            state = TicketStateFactory.createState(status);
+        }
+    }
+    
     // Getters and Setters
     public Long getId() {
         return id;
@@ -94,6 +122,16 @@ public class Ticket {
 
     public void setStatus(ETicketStatus status) {
         this.status = status;
+        this.state = TicketStateFactory.createState(status);
+    }
+    
+    public TicketState getState() {
+        ensureStateInitialized();
+        return state;
+    }
+
+    public void setState(TicketState state) {
+        this.state = state;
     }
 
     public Customer getCustomer() {
