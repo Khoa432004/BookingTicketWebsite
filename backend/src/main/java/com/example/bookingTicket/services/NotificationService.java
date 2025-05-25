@@ -69,7 +69,7 @@ public class NotificationService {
     }
     // Thông báo khi dat ve thanh cong
     @Transactional
-    public Map<String, Object> notifyBookingSuccess(String content) {
+    public Map<String, Object> notifyBookingSuccess(String content, Long target) {
         NotifiByOwner notification = new NotifiByOwner();
 
         // Đặt giá trị mặc định, sẽ được observer tùy chỉnh
@@ -78,7 +78,7 @@ public class NotificationService {
         notification.setDate(LocalDateTime.now());
         notification.setNotifiId("BOOKING_NOTIF" + System.currentTimeMillis());
         notification.setType(ENotifiType.SYSTEM);
-        notification.setReceiving("All");
+        notification.setReceiving(target.toString(0));
 
         Owner sender = new Owner();
         sender.setId(2L);

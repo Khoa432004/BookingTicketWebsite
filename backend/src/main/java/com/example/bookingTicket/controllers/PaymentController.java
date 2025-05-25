@@ -41,6 +41,9 @@ import com.example.bookingTicket.services.PaymentService;
 import com.example.bookingTicket.services.SeatService;
 import com.example.bookingTicket.services.TripService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
@@ -72,7 +75,7 @@ public class PaymentController {
     @Autowired
     private TripService tripService;
 
-     @Autowired
+    @Autowired
     private NotificationService notificationService;
 
     @PostMapping("/prepare")
@@ -191,7 +194,7 @@ public class PaymentController {
     }
 
     @PostMapping("/complete")
-    public ResponseEntity<?> completePayment(@RequestBody PaymentRequest request) {
+    public ResponseEntity<?> completePayment(@RequestBody PaymentRequest request, HttpServletRequest httpRequest) {
         try {
             // Cập nhật trạng thái ghế thành BOOKED
             Seat seat = seatService.getSeatById(Long.parseLong(request.getSeatId()));
@@ -219,7 +222,18 @@ public class PaymentController {
             payment.setPaymentTime(LocalDateTime.now());
             paymentService.save(payment);
 
-            notificationService.notifyBookingSuccess("Chuyến đi được "+trip.getTripId()+ "đặt chỗ" );
+            // Lấy userId từ session
+            HttpSession session = httpRequest.getSession(false);
+            if (session == null) {
+                throw new IllegalStateException("Không có session hiện tại.");
+            }
+            Long userId = (Long) session.getAttribute("userId");
+            if (userId == null) {
+                throw new IllegalStateException("Không tìm thấy userId trong session.");
+            }
+
+            // Gửi thông báo sau khi đặt vé thành công
+            notificationService.notifyBookingSuccess( "Chuyến đi "+String.valueOf(trip.getTripId()) + " đã được đặt chỗ", userId);
 
             return ResponseEntity.ok(new SuccessResponse("Payment completed successfully", savedBooking));
         } catch (Exception e) {
@@ -242,4 +256,4 @@ public class PaymentController {
             return "";
         }
     }
-} 
+}

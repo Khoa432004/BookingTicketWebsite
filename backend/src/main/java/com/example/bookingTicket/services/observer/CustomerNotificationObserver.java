@@ -31,11 +31,12 @@ public class CustomerNotificationObserver implements NotificationObserver {
 
             // Tùy chỉnh nội dung thông báo dựa trên loại sự kiện
             if (notification.getType().equals(ENotifiType.SYSTEM)) {
-                customerNotification.setTitle("Hệ thống thông báo");
                 customerNotification.setContent("Đặt vé thành công");
             } else {
                 customerNotification.setTitle(notification.getTitle());
                 customerNotification.setContent(notification.getContent());
+                customerNotification.setReceiving(notification.getReceiving());
+
             }
 
             try {

@@ -134,7 +134,7 @@ export function Header() {
 
         // Lọc chỉ lấy thông báo có target là "customer" && all
         const customerNotifications = response.data.filter(
-          (item) => item.target.toLowerCase() === "customer" || item.target.toLowerCase() === "all"
+          (item) => item.target.toLowerCase() === "customer" || item.target.toLowerCase() === "all" 
         );
 
         // Ánh xạ dữ liệu từ API sang định dạng notifications của Header
