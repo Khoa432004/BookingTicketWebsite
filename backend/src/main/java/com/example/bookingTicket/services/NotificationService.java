@@ -73,7 +73,7 @@ public class NotificationService {
         NotifiByOwner notification = new NotifiByOwner();
 
         // Đặt giá trị mặc định, sẽ được observer tùy chỉnh
-        notification.setTitle("Booking Success Notification");
+        notification.setTitle("Thông báo hệ thống");
         notification.setContent(content);
         notification.setDate(LocalDateTime.now());
         notification.setNotifiId("BOOKING_NOTIF" + System.currentTimeMillis());
