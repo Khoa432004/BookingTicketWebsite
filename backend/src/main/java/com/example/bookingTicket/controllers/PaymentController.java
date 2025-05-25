@@ -36,6 +36,7 @@ import com.example.bookingTicket.responses.ErrorResponse;
 import com.example.bookingTicket.responses.SuccessResponse;
 import com.example.bookingTicket.services.BookingHistoryService;
 import com.example.bookingTicket.services.CustomerService;
+import com.example.bookingTicket.services.NotificationService;
 import com.example.bookingTicket.services.PaymentService;
 import com.example.bookingTicket.services.SeatService;
 import com.example.bookingTicket.services.TripService;
@@ -70,6 +71,9 @@ public class PaymentController {
     
     @Autowired
     private TripService tripService;
+
+     @Autowired
+    private NotificationService notificationService;
 
     @PostMapping("/prepare")
     public ResponseEntity<?> preparePayment(@RequestBody PaymentRequest request) throws Exception {
@@ -214,6 +218,8 @@ public class PaymentController {
             payment.setBookingHistory(savedBooking);
             payment.setPaymentTime(LocalDateTime.now());
             paymentService.save(payment);
+
+            notificationService.notifyBookingSuccess("Chuyến đi được "+trip.getTripId()+ "đặt chỗ" );
 
             return ResponseEntity.ok(new SuccessResponse("Payment completed successfully", savedBooking));
         } catch (Exception e) {

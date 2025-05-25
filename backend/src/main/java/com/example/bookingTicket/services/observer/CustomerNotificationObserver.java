@@ -3,6 +3,7 @@ package com.example.bookingTicket.services.observer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.example.bookingTicket.enums.ENotifiType;
 import com.example.bookingTicket.models.NotifiByOwner;
 import com.example.bookingTicket.repositories.NotifiByOwnerRepository;
 
@@ -27,6 +28,15 @@ public class CustomerNotificationObserver implements NotificationObserver {
             customerNotification.setType(notification.getType());
             customerNotification.setReceiving("Customer");
             customerNotification.setSender(notification.getSender());
+
+            // Tùy chỉnh nội dung thông báo dựa trên loại sự kiện
+            if (notification.getType().equals(ENotifiType.BY_OWNER)) {
+                customerNotification.setTitle("Hệ thống thông báo");
+                customerNotification.setContent("Đặt vé thành công");
+            } else {
+                customerNotification.setTitle(notification.getTitle());
+                customerNotification.setContent(notification.getContent());
+            }
 
             try {
                 notifiByOwnerRepository.save(customerNotification);

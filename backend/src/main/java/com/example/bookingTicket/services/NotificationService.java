@@ -35,7 +35,7 @@ public class NotificationService {
         notification.setContent(content);
         notification.setDate(LocalDateTime.now());
         notification.setNotifiId("NOTIF" + System.currentTimeMillis());
-        notification.setType(ENotifiType.SYSTEM);
+        notification.setType(ENotifiType.BY_OWNER);
 
         String receiving;
         switch (target.toLowerCase()) {
@@ -67,6 +67,31 @@ public class NotificationService {
 
         return convertToMapForCreation(notification);
     }
+    // Thông báo khi dat ve thanh cong
+    @Transactional
+    public Map<String, Object> notifyBookingSuccess(String content) {
+        NotifiByOwner notification = new NotifiByOwner();
+
+        // Đặt giá trị mặc định, sẽ được observer tùy chỉnh
+        notification.setTitle("Booking Success Notification");
+        notification.setContent(content);
+        notification.setDate(LocalDateTime.now());
+        notification.setNotifiId("BOOKING_NOTIF" + System.currentTimeMillis());
+        notification.setType(ENotifiType.SYSTEM);
+        notification.setReceiving("All");
+
+        Owner sender = new Owner();
+        sender.setId(2L);
+        notification.setSender(sender);
+
+        // Không lưu thông báo gốc, chỉ thông báo cho observer
+        notificationSubject.notifyObservers(notification);
+
+        return convertToMapForCreation(notification);
+    }
+
+
+
 
     @Transactional
     public Map<String, Object> updateNotification(String notifiId, String title, String content, String target) {
