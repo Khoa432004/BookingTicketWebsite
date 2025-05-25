@@ -30,7 +30,7 @@ public class CustomerNotificationObserver implements NotificationObserver {
             customerNotification.setSender(notification.getSender());
 
             // Tùy chỉnh nội dung thông báo dựa trên loại sự kiện
-            if (notification.getType().equals(ENotifiType.BY_OWNER)) {
+            if (notification.getType().equals(ENotifiType.SYSTEM)) {
                 customerNotification.setTitle("Hệ thống thông báo");
                 customerNotification.setContent("Đặt vé thành công");
             } else {
