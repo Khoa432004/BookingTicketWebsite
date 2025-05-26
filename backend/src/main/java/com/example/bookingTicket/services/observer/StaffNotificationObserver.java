@@ -20,7 +20,7 @@ public class StaffNotificationObserver implements NotificationObserver {
         String target = notification.getReceiving().toLowerCase();
         if (target.equals("staff") || target.equals("all")) {
             NotifiByOwner staffNotification = new NotifiByOwner();
-            staffNotification.setNotifiId(notification.getNotifiId() + "_staff");
+            staffNotification.setNotifiId(notification.getNotifiId());
             staffNotification.setTitle(notification.getTitle());
             staffNotification.setContent(notification.getContent());
             staffNotification.setDate(notification.getDate());

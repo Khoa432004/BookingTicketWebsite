@@ -21,7 +21,7 @@ public class CustomerNotificationObserver implements NotificationObserver {
         String target = notification.getReceiving().toLowerCase();
         if (target.equals("customer") || target.equals("all")) {
             NotifiByOwner customerNotification = new NotifiByOwner();
-            customerNotification.setNotifiId(notification.getNotifiId() + "_customer");
+            customerNotification.setNotifiId(notification.getNotifiId());
             customerNotification.setTitle(notification.getTitle());
             customerNotification.setContent(notification.getContent());
             customerNotification.setDate(notification.getDate());
