@@ -196,6 +196,10 @@ public class PaymentController {
     @PostMapping("/complete")
     public ResponseEntity<?> completePayment(@RequestBody PaymentRequest request, HttpServletRequest httpRequest) {
         try {
+
+
+
+            
             // Cập nhật trạng thái ghế thành BOOKED
             Seat seat = seatService.getSeatById(Long.parseLong(request.getSeatId()));
             seat.setStatus(ESeatStatus.BOOKED);
@@ -205,22 +209,7 @@ public class PaymentController {
             Customer customer = customerService.findById(Long.parseLong(request.getUserId()));
             Trip trip = tripService.findById(Long.parseLong(request.getTripId()));
 
-            // Tạo bản ghi booking history
-            BookingHistory bookingHistory = new BookingHistory();
-            bookingHistory.setCustomer(customer);
-            bookingHistory.setBookingTime(LocalDateTime.now());
-            bookingHistory.setSeat(seat);
-            bookingHistory.setTrip(trip);
-            BookingHistory savedBooking = bookingHistoryService.save(bookingHistory);
 
-            // Tạo bản ghi payment
-            Payment payment = new Payment();
-            payment.setAmount(request.getAmount().longValue());
-            payment.setStatus(EPaymentStatus.SUCCEEDED);
-            payment.setMethod(EPaymentMethod.TRANSFER);
-            payment.setBookingHistory(savedBooking);
-            payment.setPaymentTime(LocalDateTime.now());
-            paymentService.save(payment);
 
             
             // Lấy userId từ session
@@ -247,6 +236,28 @@ public class PaymentController {
                 userId.toString(), // Sử dụng userId làm receiving
                 senderId
             );
+
+
+
+            // Tạo bản ghi booking history
+            BookingHistory bookingHistory = new BookingHistory();
+            bookingHistory.setCustomer(customer);
+            bookingHistory.setBookingTime(LocalDateTime.now());
+            bookingHistory.setSeat(seat);
+            bookingHistory.setTrip(trip);
+            BookingHistory savedBooking = bookingHistoryService.save(bookingHistory);
+
+
+
+            // Tạo bản ghi payment
+            Payment payment = new Payment();
+            payment.setAmount(request.getAmount().longValue());
+            payment.setStatus(EPaymentStatus.SUCCEEDED);
+            payment.setMethod(EPaymentMethod.TRANSFER);
+            payment.setBookingHistory(savedBooking);
+            payment.setPaymentTime(LocalDateTime.now());
+            paymentService.save(payment);
+
 
             return ResponseEntity.ok(new SuccessResponse("Payment completed successfully", savedBooking));
         } catch (Exception e) {

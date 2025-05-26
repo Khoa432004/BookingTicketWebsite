@@ -29,15 +29,6 @@ public class CustomerNotificationObserver implements NotificationObserver {
             customerNotification.setReceiving("Customer");
             customerNotification.setSender(notification.getSender());
 
-            // Tùy chỉnh nội dung thông báo dựa trên loại sự kiện
-            if (notification.getType().equals(ENotifiType.SYSTEM)) {
-                customerNotification.setContent("Đặt vé thành công");
-            } else {
-                customerNotification.setTitle(notification.getTitle());
-                customerNotification.setContent(notification.getContent());
-                customerNotification.setReceiving(notification.getReceiving());
-
-            }
 
             try {
                 notifiByOwnerRepository.save(customerNotification);
