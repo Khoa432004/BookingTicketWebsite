@@ -222,8 +222,8 @@ public class PaymentController {
             payment.setPaymentTime(LocalDateTime.now());
             paymentService.save(payment);
 
-            // Lấy userId từ session
-            HttpSession session = httpRequest.getSession(false);
+            
+             HttpSession session = httpRequest.getSession(false);
             if (session == null) {
                 throw new IllegalStateException("Không có session hiện tại.");
             }
@@ -232,8 +232,12 @@ public class PaymentController {
                 throw new IllegalStateException("Không tìm thấy userId trong session.");
             }
 
-            // Gửi thông báo sau khi đặt vé thành công
-            notificationService.notifyBookingSuccess( "Chuyến đi "+String.valueOf(trip.getTripId()) + " đã được đặt chỗ", userId);
+            Long senderId = 2L;
+            notificationService.createBookingNotification(
+                String.valueOf(trip.getTripId()),
+                userId,
+                senderId
+            );
 
             return ResponseEntity.ok(new SuccessResponse("Payment completed successfully", savedBooking));
         } catch (Exception e) {

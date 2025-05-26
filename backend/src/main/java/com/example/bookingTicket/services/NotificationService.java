@@ -67,31 +67,39 @@ public class NotificationService {
 
         return convertToMapForCreation(notification);
     }
-    // Thông báo khi dat ve thanh cong
-    @Transactional
-    public Map<String, Object> notifyBookingSuccess(String content, Long target) {
-        NotifiByOwner notification = new NotifiByOwner();
 
-        // Đặt giá trị mặc định, sẽ được observer tùy chỉnh
-        notification.setTitle("Thông báo hệ thống");
-        notification.setContent(content);
-        notification.setDate(LocalDateTime.now());
-        notification.setNotifiId("BOOKING_NOTIF" + System.currentTimeMillis());
-        notification.setType(ENotifiType.SYSTEM);
-        notification.setReceiving(target.toString(0));
+
+        // Tạo thông báo dat ve thanh cong
+        @Transactional
+    public void createBookingNotification(String bookingId, Long userId, Long senderId) {
+        // Tạo thông báo cho Staff
+        NotifiByOwner staffNotification = new NotifiByOwner();
+        staffNotification.setTitle("Đặt vé thành công");
+        staffNotification.setContent("Khách hàng với ID " + userId + " đã đặt vé cho chuyến đi " + bookingId);
+        staffNotification.setDate(LocalDateTime.now());
+        staffNotification.setNotifiId("NOTIF_STAFF_" + System.currentTimeMillis());
+        staffNotification.setType(ENotifiType.SYSTEM);
+        staffNotification.setReceiving("Staff");
 
         Owner sender = new Owner();
-        sender.setId(2L);
-        notification.setSender(sender);
+        sender.setId(senderId);
+        staffNotification.setSender(sender);
 
-        // Không lưu thông báo gốc, chỉ thông báo cho observer
-        notificationSubject.notifyObservers(notification);
+        notifiByOwnerRepository.save(staffNotification);
 
-        return convertToMapForCreation(notification);
+        // Tạo thông báo cho userId
+        NotifiByOwner userNotification = new NotifiByOwner();
+        userNotification.setTitle("Xác nhận đặt vé");
+        userNotification.setContent("Bạn đã đặt vé thành công" );
+        userNotification.setDate(LocalDateTime.now());
+        userNotification.setNotifiId("NOTIF_USER_" + System.currentTimeMillis());
+        userNotification.setType(ENotifiType.BY_OWNER);
+        userNotification.setReceiving(userId.toString());
+
+        userNotification.setSender(sender);
+
+        notifiByOwnerRepository.save(userNotification);
     }
-
-
-
 
     @Transactional
     public Map<String, Object> updateNotification(String notifiId, String title, String content, String target) {
