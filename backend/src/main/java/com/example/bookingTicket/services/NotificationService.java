@@ -57,48 +57,52 @@ public class NotificationService {
         sender.setId(senderId);
         notification.setSender(sender);
 
-        // Không lưu thông báo gốc nếu target là "All", chỉ thông báo cho observer
         if (!receiving.equals("All")) {
             notifiByOwnerRepository.save(notification);
         }
 
-        // Thông báo cho các observer để lưu thông báo cho từng nhóm
         notificationSubject.notifyObservers(notification);
 
         return convertToMapForCreation(notification);
     }
 
-
-        // Tạo thông báo dat ve thanh cong
-        @Transactional
+    @Transactional
     public void createBookingNotification(String bookingId, Long userId, Long senderId) {
-        // Tạo thông báo cho Staff
-        NotifiByOwner staffNotification = new NotifiByOwner();
-        staffNotification.setTitle("Đặt vé thành công");
-        staffNotification.setContent("Khách hàng với ID " + userId + " đã đặt vé cho chuyến đi " + bookingId);
-        staffNotification.setDate(LocalDateTime.now());
-        staffNotification.setNotifiId("NOTIF_STAFF_" + System.currentTimeMillis());
-        staffNotification.setType(ENotifiType.SYSTEM);
-        staffNotification.setReceiving("Staff");
+        try {
+            // Tạo thông báo cho Staff
+            NotifiByOwner staffNotification = new NotifiByOwner();
+            staffNotification.setTitle("Đặt vé thành công");
+            staffNotification.setContent("Khách hàng với ID " + userId + " đã đặt vé cho chuyến đi " + bookingId);
+            staffNotification.setDate(LocalDateTime.now());
+            staffNotification.setNotifiId("NOTIF_STAFF_" + System.currentTimeMillis());
+            staffNotification.setType(ENotifiType.SYSTEM);
+            staffNotification.setReceiving("Staff");
 
-        Owner sender = new Owner();
-        sender.setId(senderId);
-        staffNotification.setSender(sender);
+            Owner sender = new Owner();
+            sender.setId(senderId);
+            staffNotification.setSender(sender);
 
-        notifiByOwnerRepository.save(staffNotification);
+            notifiByOwnerRepository.save(staffNotification);
+            System.out.println("Đã lưu thông báo cho Staff: " + staffNotification.getNotifiId());
 
-        // Tạo thông báo cho userId
-        NotifiByOwner userNotification = new NotifiByOwner();
-        userNotification.setTitle("Xác nhận đặt vé");
-        userNotification.setContent("Bạn đã đặt vé thành công" );
-        userNotification.setDate(LocalDateTime.now());
-        userNotification.setNotifiId("NOTIF_USER_" + System.currentTimeMillis());
-        userNotification.setType(ENotifiType.BY_OWNER);
-        userNotification.setReceiving(userId.toString());
+            // Tạo thông báo cho userId
+            NotifiByOwner userNotification = new NotifiByOwner();
+            userNotification.setTitle("Xác nhận đặt vé");
+            userNotification.setContent("Bạn đã đặt vé thành công");
+            userNotification.setDate(LocalDateTime.now());
+            userNotification.setNotifiId("NOTIF_USER_" + System.currentTimeMillis());
+            userNotification.setType(ENotifiType.BY_OWNER);
+            userNotification.setReceiving(userId.toString());
 
-        userNotification.setSender(sender);
+            userNotification.setSender(sender);
 
-        notifiByOwnerRepository.save(userNotification);
+            notifiByOwnerRepository.save(userNotification);
+            System.out.println("Đã lưu thông báo cho User: " + userNotification.getNotifiId());
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lưu thông báo: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Không thể lưu thông báo: " + e.getMessage(), e);
+        }
     }
 
     @Transactional
@@ -125,12 +129,10 @@ public class NotificationService {
         }
         notification.setReceiving(receiving);
 
-        // Không lưu thông báo gốc nếu target là "All", chỉ thông báo cho observer
         if (!receiving.equals("All")) {
             notifiByOwnerRepository.save(notification);
         }
 
-        // Thông báo cho các observer khi cập nhật
         notificationSubject.notifyObservers(notification);
 
         return convertToMapForCreation(notification);
