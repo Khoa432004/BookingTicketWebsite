@@ -71,6 +71,7 @@ public class TicketController {
             Payment payment = ticketService.processPayment(Long.parseLong(request.getPaymentId()));
             if (payment.getStatus() == EPaymentStatus.SUCCEEDED) {
                 return ResponseEntity.ok(new SuccessResponse("Success", "Payment successful"));
+
             } else {
                 return ResponseEntity.badRequest().body(new ErrorResponse("Error", "Payment failed"));
             }

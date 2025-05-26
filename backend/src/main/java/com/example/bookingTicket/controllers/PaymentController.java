@@ -223,7 +223,8 @@ public class PaymentController {
             paymentService.save(payment);
 
             
-             HttpSession session = httpRequest.getSession(false);
+            // Lấy userId từ session
+            HttpSession session = httpRequest.getSession(false);
             if (session == null) {
                 throw new IllegalStateException("Không có session hiện tại.");
             }
@@ -232,10 +233,18 @@ public class PaymentController {
                 throw new IllegalStateException("Không tìm thấy userId trong session.");
             }
 
-            Long senderId = 2L;
-            notificationService.createBookingNotification(
-                String.valueOf(trip.getTripId()),
-                userId,
+            // Gửi thông báo cho Staff và userId
+            Long senderId = 2L; // Người gửi mặc định là 2
+            notificationService.createNotification(
+                "Đặt vé thành công",
+                "Khách hàng với ID " + userId + " đã đặt vé cho chuyến đi " + trip.getTripId(),
+                "staff",
+                senderId
+            );
+            notificationService.createNotification(
+                "Xác nhận đặt vé",
+                "Bạn đã đặt vé thành công từ " + trip.getOrigin() + " đến " + trip.getDestination() + " vào lúc " + LocalDateTime.now(),
+                userId.toString(), // Sử dụng userId làm receiving
                 senderId
             );
 
